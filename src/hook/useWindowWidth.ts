@@ -1,6 +1,6 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
-export function useWindowWidth() {
+export const useWindowWidth = () => {
   const windowWidth = ref<number>(window.innerWidth)
   const windowHeight = ref<number>(window.innerHeight)
   const updateWindowSize = () => {
