@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
+import { markRaw } from 'vue'
 import GitHubSvg from '@/assets/image/github.svg'
 import LinkedInSvg from '@/assets/image/linkedin.svg'
-import { ref } from 'vue'
-const linkList = ref([
+import type { linkListType, workExperienceListType } from './type'
+
+const linkList = markRaw<linkListType>([
   {
     url: 'https://github.com/liuconing',
     svg: GitHubSvg
@@ -10,6 +13,48 @@ const linkList = ref([
   {
     url: 'https://www.linkedin.com/in/ellis-liu-0199a814a/',
     svg: LinkedInSvg
+  }
+])
+const workExperienceList = markRaw<workExperienceListType>([
+  {
+    companyName: '思偉達創新科技股份有限公司',
+    position: 'Front-End Developer',
+    duration: '2018年4月 - 2020年2月',
+    responsibilities: [
+      '建立乙太坊交易所和與智能合約串接製作區塊鏈相關產品。',
+      '使用Vue / Nuxt.js製作區塊鏈相關網站。',
+      '使用web3.js與各種生態鏈跟區塊鏈合約進行溝通與操作。'
+    ]
+  },
+  {
+    companyName: '樹人科技有限公司',
+    position: 'Front-End Developer',
+    duration: '2020年3月 - 2021年4月',
+    responsibilities: [
+      '串接H5遊戲API並製作手機版本的入口網站。',
+      '製作後台管理網站，針對使用者資料進行操作。',
+      '使用nuxt.js製作SSR網站，具有SEO效果。'
+    ]
+  },
+  {
+    companyName: '氪龍有限公司',
+    position: 'Front-End Developer',
+    duration: '2021年7月 - 2022年6月',
+    responsibilities: [
+      '使用React / Next.js製作區塊鏈網站。',
+      '為前端團隊分享串接合約跟區塊鏈遇到的問題。',
+      '使用ant-pro框架來管理相關後台類型網站。'
+    ]
+  },
+  {
+    companyName: '拓荒資本股份有限公司',
+    position: 'Front-End Developer',
+    duration: '2022年7月 - 2022年3月',
+    responsibilities: [
+      '負責公司官方網站的架設、更新和維護，確保網站可用性和優秀用戶體驗。',
+      '參與從零開始的React Native應用開發項目，與團隊成員成功上架區塊練錢包應用程式，實現了良好的市場反饋和用戶體驗。',
+      '與團隊合作建立和優化敏捷開發流程，提高了項目交付效率和質量。'
+    ]
   }
 ])
 </script>
@@ -20,9 +65,8 @@ const linkList = ref([
       <div class="container max-w-screen-xl mx-auto px-4">
         <div class="text-center">
           <div class="flex justify-center mb-16">
-            <!-- <img src="@/assets/image/home-img.png" alt="Image" /> -->
             <img
-              class="rounded-full w-64 h-64"
+              class="size-16 rounded-full"
               src="https://i.imgur.com/vTWoB7o.png"
               alt="劉文華（Ellis）"
             />
@@ -52,122 +96,6 @@ const linkList = ref([
         </div>
       </div>
     </section>
-
-    <!-- <section class="py-10 md:py-16">
-      <div class="container max-w-screen-xl mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <div class="w-20 py-6 flex justify-center bg-gray-100 rounded-md mb-4">
-              <i data-feather="activity"></i>
-            </div>
-
-            <h4 class="font-medium text-gray-700 text-lg mb-4">High experience</h4>
-
-            <p class="font-normal text-gray-500 text-md">
-              Lorem ipsum dolor sit amet, consectetur <br />
-              adipiscing elit, sed do eiusmod tempor <br />
-              incididunt ut labore et dolore magna aliqua.
-            </p>
-          </div>
-
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <div class="w-20 py-6 flex justify-center bg-gray-100 rounded-md mb-4">
-              <i data-feather="codesandbox"></i>
-            </div>
-
-            <h4 class="font-medium text-gray-700 text-lg mb-4">Useful sandboxes</h4>
-
-            <p class="font-normal text-gray-500 text-md">
-              Lorem ipsum dolor sit amet, consectetur <br />
-              adipiscing elit, sed do eiusmod tempor <br />
-              incididunt ut labore et dolore magna aliqua.
-            </p>
-          </div>
-
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <div class="w-20 py-6 flex justify-center bg-gray-100 rounded-md mb-4">
-              <i data-feather="coffee"></i>
-            </div>
-
-            <h4 class="font-medium text-gray-700 text-lg mb-4">Success side projects</h4>
-
-            <p class="font-normal text-gray-500 text-md">
-              Lorem ipsum dolor sit amet, consectetur <br />
-              adipiscing elit, sed do eiusmod tempor <br />
-              incididunt ut labore et dolore magna aliqua.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-10 md:py-16">
-      <div class="container max-w-screen-xl mx-auto px-4">
-        <div class="flex flex-col lg:flex-row justify-between">
-          <div class="mb-10 lg:mb-0">
-            <h1 class="font-medium text-gray-700 text-3xl md:text-4xl mb-5">Portfolio</h1>
-
-            <p class="font-normal text-gray-500 text-xs md:text-base">
-              I have brought here my biggest and favorite works <br />
-              as a professional.
-            </p>
-          </div>
-
-          <div class="space-y-24">
-            <div class="flex space-x-6">
-              <h1 class="font-normal text-gray-700 text-3xl md:text-4xl">01</h1>
-
-              <span class="w-28 h-0.5 bg-gray-300 mt-5"></span>
-
-              <div>
-                <h1 class="font-normal text-gray-700 text-3xl md:text-4xl mb-5">
-                  Demo API Generator
-                </h1>
-
-                <p class="font-normal text-gray-500 text-sm md:text-base">
-                  A dummy data free and documented API generator to facilitate <br />
-                  the process of testing the front-end portion of projects.
-                </p>
-              </div>
-            </div>
-
-            <div class="flex space-x-6">
-              <h1 class="font-normal text-gray-700 text-3xl md:text-4xl">02</h1>
-
-              <span class="w-28 h-0.5 bg-gray-300 mt-5"></span>
-
-              <div>
-                <h1 class="font-normal text-gray-700 text-3xl md:text-4xl mb-5">
-                  Demo API Generator
-                </h1>
-
-                <p class="font-normal text-gray-500 text-sm md:text-base">
-                  A dummy data free and documented API generator to facilitate <br />
-                  the process of testing the front-end portion of projects.
-                </p>
-              </div>
-            </div>
-
-            <div class="flex space-x-6">
-              <h1 class="font-normal text-gray-700 text-3xl md:text-4xl">03</h1>
-
-              <span class="w-28 h-0.5 bg-gray-300 mt-5"></span>
-
-              <div>
-                <h1 class="font-normal text-gray-700 text-3xl md:text-4xl mb-5">
-                  Demo API Generator
-                </h1>
-
-                <p class="font-normal text-gray-500 text-sm md:text-base">
-                  A dummy data free and documented API generator to facilitate <br />
-                  the process of testing the front-end portion of projects.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section> -->
 
     <section class="py-10 md:py-16">
       <div class="container max-w-screen-xl mx-auto px-4">
@@ -231,32 +159,11 @@ const linkList = ref([
 
     <section class="py-10 md:py-16">
       <div class="container max-w-screen-xl mx-auto px-4">
-        <div class="text-center">
-          <h1
-            class="font-normal text-gray-300 text-3xl md:text-6xl lg:text-7xl mb-20 md:mb-32 lg:mb-48"
-          >
-            Please do not measure your skills in <br />
-            percentages!
-          </h1>
-
-          <p class="font-medium text-gray-700 text-xs md:text-base">
-            In my many years of experience, I use @laravel for backend projects and @vuejs for
-            <br />
-            front-end projects. I’m an avid programmer, so I create designs based on the <br />
-            weekend @figmadesign.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-10 md:py-16">
-      <div class="container max-w-screen-xl mx-auto px-4">
         <h1 class="font-medium text-gray-700 text-3xl md:text-4xl mb-5">Experience</h1>
 
         <p class="font-normal text-gray-500 text-xs md:text-base mb-20">
           Below is a summary of the places I studied
         </p>
-
         <div class="flex flex-col lg:flex-row justify-between">
           <div class="space-y-8 md:space-y-16 mb-16 md:mb-0">
             <h6 class="font-medium text-gray-400 text-base uppercase">Company</h6>
@@ -315,37 +222,25 @@ const linkList = ref([
 
     <section class="py-10 md:py-16">
       <div class="container max-w-screen-xl mx-auto px-4">
-        <h1 class="font-medium text-gray-700 text-3xl md:text-4xl mb-5">Brands</h1>
-
-        <p class="font-normal text-gray-500 text-xs md:text-base mb-10 md:mb-20">
-          Below is a summary of the places I studied
-        </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          <img src="@/assets/image/brand-1.png" alt="Image" />
-
-          <img src="@/assets/image/brand-2.png" alt="Image" />
-
-          <img src="@/assets/image/brand-3.png" alt="Image" />
-
-          <img src="@/assets/image/brand-4.png" alt="Image" />
-
-          <img src="@/assets/image/brand-5.png" alt="Image" />
-
-          <img src="@/assets/image/brand-6.png" alt="Image" />
-        </div>
-      </div>
-    </section>
-
-    <section class="py-10 md:py-16">
-      <div class="container max-w-screen-xl mx-auto px-4">
-        <h1 class="font-medium text-gray-700 text-3xl md:text-4xl mb-5">Testimonial</h1>
+        <h1 class="font-medium text-gray-700 text-3xl md:text-4xl mb-5">作品</h1>
 
         <p class="font-normal text-gray-500 text-xs md:text-base mb-10 md:mb-20">
           Below is a summary of the places I studied
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <RouterLink to="/airQuality">
+            <div class="bg-gray-50 px-8 py-10 rounded-md">
+              <h6 class="font-semibold text-gray-500 text-md mb-4">
+                空氣品質觀測網站
+                <span class="font-medium text-gray-300 text-sm">- CEO at EarlyBird</span>
+              </h6>
+              <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
+                <li>理解版本控制的基本概念，熟練使用 Git 進行代碼管理和協作。</li>
+                <li>熟悉 Git Flow 協作流程</li>
+              </ul>
+            </div>
+          </RouterLink>
           <div class="bg-gray-50 px-8 py-10 rounded-md">
             <p class="font-normal text-gray-500 text-md mb-4">
               Lorem ipsum dolor sit amet, consectetur <br />
@@ -426,80 +321,5 @@ const linkList = ref([
         </div>
       </div>
     </section>
-
-    <footer class="py-10 md:py-16 mb-20 md:mb-40 lg::mb-52">
-      <div class="container max-w-screen-xl mx-auto px-4">
-        <div class="text-center">
-          <h1 class="font-medium text-gray-700 text-4xl md:text-5xl mb-5">Testimonial</h1>
-
-          <p class="font-normal text-gray-400 text-md md:text-lg mb-20">
-            I’m not currently taking on new client work but feel free to contact me for any <br />
-            other inquiries.
-          </p>
-
-          <div class="flex items-center justify-center space-x-8">
-            <a
-              href="#"
-              class="w-16 h-16 flex items-center justify-center rounded-full hover:bg-gray-200 transition ease-in-out duration-500"
-            >
-              <i
-                data-feather="twitter"
-                class="text-gray-500 hover:text-gray-800 transition ease-in-out duration-500"
-              ></i>
-            </a>
-
-            <a
-              href="#"
-              class="w-16 h-16 flex items-center justify-center rounded-full hover:bg-gray-200 transition ease-in-out duration-500"
-            >
-              <i
-                data-feather="dribbble"
-                class="text-gray-500 hover:text-gray-700 transition ease-in-out duration-500"
-              ></i>
-            </a>
-
-            <a
-              href="#"
-              class="w-16 h-16 flex items-center justify-center rounded-full hover:bg-gray-200 transition ease-in-out duration-500"
-            >
-              <i
-                data-feather="facebook"
-                class="text-gray-500 hover:text-gray-700 transition ease-in-out duration-500"
-              ></i>
-            </a>
-
-            <a
-              href="#"
-              class="w-16 h-16 flex items-center justify-center rounded-full hover:bg-gray-200 transition ease-in-out duration-500"
-            >
-              <i
-                data-feather="codepen"
-                class="text-gray-500 hover:text-gray-700 transition ease-in-out duration-500"
-              ></i>
-            </a>
-
-            <a
-              href="#"
-              class="w-16 h-16 flex items-center justify-center rounded-full hover:bg-gray-200 transition ease-in-out duration-500"
-            >
-              <i
-                data-feather="at-sign"
-                class="text-gray-500 hover:text-gray-700 transition ease-in-out duration-500"
-              ></i>
-            </a>
-
-            <a
-              href="#"
-              class="w-16 h-16 flex items-center justify-center rounded-full hover:bg-gray-200 transition ease-in-out duration-500"
-            >
-              <i
-                data-feather="instagram"
-                class="text-gray-500 hover:text-gray-700 transition ease-in-out duration-500"
-              ></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
   </main>
 </template>
