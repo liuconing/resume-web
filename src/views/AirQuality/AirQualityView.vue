@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import Loading from '@/components/Loading.vue'
 import { ref, watchEffect, watch } from 'vue'
+import { useWindowWidth } from '@/hook/useWindowWidth'
 import { useAirQuality } from '@/queries/useAirQuality'
 import type { callAqiRes } from '@/api/type'
+const { windowWidth } = useWindowWidth()
 const { data: AirQualityData, isLoading } = useAirQuality()
 const targetElement = ref<HTMLElement | null>(null)
 const countyMap = ref<string[]>([])
@@ -11,8 +13,7 @@ const countyPublishTime = ref<string>('')
 const areaData = ref<callAqiRes>()
 const selectCounty = ref<string>('請選擇地區')
 function scrollToElement() {
-  if (targetElement.value) {
-    console.log(targetElement)
+  if (targetElement.value && windowWidth.value <= 768) {
     targetElement.value?.scrollIntoView({ behavior: 'smooth' })
   }
 }
@@ -218,7 +219,7 @@ ul.AreaList {
   }
 }
 ul.ContentSelect {
-  @apply w-full  md:pl-7 flex flex-wrap items-start justify-between;
+  @apply w-full h-0  md:pl-7 flex flex-wrap items-start justify-between;
   li {
     @apply w-5/12 mb-8 py-4 flex items-center justify-between cursor-pointer;
     border: solid 3px #000;
