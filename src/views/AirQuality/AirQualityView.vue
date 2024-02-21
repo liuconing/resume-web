@@ -199,10 +199,8 @@ table {
   }
 }
 
-.FocusArea {
-  div {
-    @apply w-full p-5 text-5xl text-center font-bold border-b-2 border-black flex items-center justify-center;
-  }
+.FocusArea div {
+  @apply w-full flex items-center justify-center p-5 text-5xl text-center font-bold border-b-2 border-black;
 }
 ul.AreaList {
   li {
@@ -219,7 +217,7 @@ ul.AreaList {
   }
 }
 ul.ContentSelect {
-  @apply w-full h-0  md:pl-7 flex flex-wrap items-start justify-between;
+  @apply w-full md:pl-7 flex flex-wrap items-start justify-between;
   li {
     @apply w-5/12 mb-8 py-4 flex items-center justify-between cursor-pointer;
     border: solid 3px #000;

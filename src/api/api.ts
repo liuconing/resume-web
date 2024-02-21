@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
 
-export const baseURL = 'https://data.moenv.gov.tw/api/v2/'
+export const baseURL = ''
 // Create a new Axios instance
 const instance: AxiosInstance = axios.create({
   baseURL,
