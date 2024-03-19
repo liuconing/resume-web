@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Loading from '@/components/Loading.vue'
+import type { callAqiRes } from '@/api/type'
 import { ref, watchEffect, watch } from 'vue'
 import { useWindowWidth } from '@/hook/useWindowWidth'
 import { useAirQuality } from '@/queries/useAirQuality'
-import type { callAqiRes } from '@/api/type'
+import Loading from '@/components/Loading.vue'
 const { windowWidth } = useWindowWidth()
 const { data: AirQualityData, isLoading } = useAirQuality()
 const targetElement = ref<HTMLElement | null>(null)
@@ -32,7 +32,7 @@ watchEffect(() => {
 <template>
   <Loading v-if="isLoading" />
   <div
-    v-else
+    v-if="!isLoading"
     class="container max-w-screen-sm md:max-w-screen-xl md:mx-auto min-h-screen pt-7 px-4 mb-10"
   >
     <div class="md:flex items-center justify-between mb-12">
@@ -159,9 +159,9 @@ watchEffect(() => {
       </ul>
     </div>
   </div>
-  <footer class="md:flex items-center justify-between p-4 bg-black">
+  <footer v-if="!isLoading" class="md:flex items-center justify-between p-4 bg-black">
     <p class="text-white">
-      資料來源：<a href="https://data.moenv.gov.tw/" target="_blank"> 行政院環境保護署 </a>
+      資料來源：<a href="https://data.moenv.gov.tw/" target="_blank"> 環境部 - 環境資料開放平臺 </a>
     </p>
     <p class="text-white">Copyright © 2019 HexSchool. All rights reserved.</p>
   </footer>

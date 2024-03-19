@@ -229,41 +229,40 @@ const workExperienceList = markRaw<workExperienceListType>([
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <RouterLink to="/airQuality">
             <div class="bg-gray-50 px-8 py-10 rounded-md">
-              <h6 class="font-semibold text-gray-500 text-md mb-4">
-                空氣品質觀測網站
-                <span class="font-medium text-gray-300 text-sm">- CEO at EarlyBird</span>
-              </h6>
+              <h6 class="font-semibold text-gray-500 text-md mb-4">空氣品質觀測網站</h6>
               <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
-                <li>理解版本控制的基本概念，熟練使用 Git 進行代碼管理和協作。</li>
-                <li>熟悉 Git Flow 協作流程</li>
+                <li>使用 Vue3</li>
+                <li>使用 Axios http requests</li>
+                <li>使用 環境資料開放平臺 資料</li>
+                <li>使用 TanStack Query 管理資料狀態</li>
               </ul>
             </div>
           </RouterLink>
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <p class="font-normal text-gray-500 text-md mb-4">
-              Lorem ipsum dolor sit amet, consectetur <br />
-              adipiscing elit, sed do eiusmod tempor <br />
-              incididunt ut labore et dolore magna aliqua.
-            </p>
+          <RouterLink to="/friendlyrestaurant">
+            <div class="bg-gray-50 px-8 py-10 rounded-md">
+              <h6 class="font-semibold text-gray-500 text-md mb-4">友善店家查詢網站</h6>
+              <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
+                <li>使用 Vue3</li>
+                <li>使用 Axios http requests</li>
+                <li>使用 政府資料開放平臺 資料</li>
+                <li>使用 TanStack Query 管理資料狀態</li>
+                <li>使用 OpenStreetMap 製作 Map 畫面</li>
+                <li>Node.js 處理 CORS 問題</li>
+              </ul>
+            </div>
+          </RouterLink>
 
-            <h6 class="font-semibold text-gray-500 text-md">
-              Stephan Clark
-              <span class="font-medium text-gray-300 text-sm">- CEO at EarlyBird</span>
-            </h6>
-          </div>
-
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <p class="font-normal text-gray-500 text-md mb-4">
-              Lorem ipsum dolor sit amet, consectetur <br />
-              adipiscing elit, sed do eiusmod tempor <br />
-              incididunt ut labore et dolore magna aliqua.
-            </p>
-
-            <h6 class="font-semibold text-gray-500 text-md">
-              Stephan Clark
-              <span class="font-medium text-gray-300 text-sm">- CEO at EarlyBird</span>
-            </h6>
-          </div>
+          <a href="http://amelia.ellisliu.website" target="_blank" rel="noopener">
+            <div class="bg-gray-50 px-8 py-10 rounded-md">
+              <h6 class="font-semibold text-gray-500 text-md mb-4">Amelia DAO</h6>
+              <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
+                <li>使用 Vue2</li>
+                <li>使用 ethers 與區塊練合約做溝通</li>
+                <li>使用 web3modal 為各種錢包與ethers做為橋樑溝通</li>
+                <li>使用 vuetify UI Library</li>
+              </ul>
+            </div>
+          </a>
 
           <div class="bg-gray-50 px-8 py-10 rounded-md">
             <p class="font-normal text-gray-500 text-md mb-4">
