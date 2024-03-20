@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import IndexView from '@/views/index/IndexView.vue'
 import AirQualityView from '@/views/AirQuality/AirQualityView.vue'
 import FriendlyRestaurantView from '@/views/FriendlyRestaurant/FriendlyRestaurantView.vue'
+import FortuneView from '@/views/Fortune/FortuneView.vue'
 
 export const createAppRouter = () => {
   const router = createRouter({
@@ -21,6 +22,11 @@ export const createAppRouter = () => {
         path: '/friendlyrestaurant',
         name: 'FriendlyRestaurant',
         component: FriendlyRestaurantView
+      },
+      {
+        path: '/fortune',
+        name: 'Fortune',
+        component: FortuneView
       }
     ]
   })

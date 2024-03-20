@@ -264,57 +264,15 @@ const workExperienceList = markRaw<workExperienceListType>([
             </div>
           </a>
 
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <p class="font-normal text-gray-500 text-md mb-4">
-              Lorem ipsum dolor sit amet, consectetur <br />
-              adipiscing elit, sed do eiusmod tempor <br />
-              incididunt ut labore et dolore magna aliqua.
-            </p>
-
-            <h6 class="font-semibold text-gray-500 text-md">
-              Stephan Clark
-              <span class="font-medium text-gray-300 text-sm">- CEO at EarlyBird</span>
-            </h6>
-          </div>
-
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <p class="font-normal text-gray-500 text-md mb-4">
-              Lorem ipsum dolor sit amet, consectetur <br />
-              adipiscing elit, sed do eiusmod tempor <br />
-              incididunt ut labore et dolore magna aliqua.
-            </p>
-
-            <h6 class="font-semibold text-gray-500 text-md">
-              Stephan Clark
-              <span class="font-medium text-gray-300 text-sm">- CEO at EarlyBird</span>
-            </h6>
-          </div>
-
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <p class="font-normal text-gray-500 text-md mb-4">
-              Lorem ipsum dolor sit amet, consectetur <br />
-              adipiscing elit, sed do eiusmod tempor <br />
-              incididunt ut labore et dolore magna aliqua.
-            </p>
-
-            <h6 class="font-semibold text-gray-500 text-md">
-              Stephan Clark
-              <span class="font-medium text-gray-300 text-sm">- CEO at EarlyBird</span>
-            </h6>
-          </div>
-
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <p class="font-normal text-gray-500 text-md mb-4">
-              Lorem ipsum dolor sit amet, consectetur <br />
-              adipiscing elit, sed do eiusmod tempor <br />
-              incididunt ut labore et dolore magna aliqua.
-            </p>
-
-            <h6 class="font-semibold text-gray-500 text-md">
-              Stephan Clark
-              <span class="font-medium text-gray-300 text-sm">- CEO at EarlyBird</span>
-            </h6>
-          </div>
+          <RouterLink to="/fortune">
+            <div class="bg-gray-50 px-8 py-10 rounded-md">
+              <h6 class="font-semibold text-gray-500 text-md mb-4">神明求籤</h6>
+              <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
+                <li>使用 Vue2</li>
+                <li>使用 Vue transition 與 CSS 動畫切換效果</li>
+              </ul>
+            </div>
+          </RouterLink>
         </div>
       </div>
     </section>
