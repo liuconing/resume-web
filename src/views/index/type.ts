@@ -7,4 +7,5 @@ export type workExperienceListType = {
   position: string
   duration: string
   responsibilities: string[]
+  seniority: number
 }[]

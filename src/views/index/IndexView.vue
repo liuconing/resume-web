@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { markRaw } from 'vue'
-import GitHubSvg from '@/assets/image/github.svg'
-import LinkedInSvg from '@/assets/image/linkedin.svg'
 import type { linkListType, workExperienceListType } from './type'
 
 const linkList = markRaw<linkListType>([
   {
     url: 'https://github.com/liuconing',
-    svg: GitHubSvg
+    svg: 'https://cdn.simpleicons.org/github/fff'
   },
   {
     url: 'https://www.linkedin.com/in/ellis-liu-0199a814a/',
-    svg: LinkedInSvg
+    svg: 'https://cdn.simpleicons.org/linkedin/fff'
   }
 ])
 const workExperienceList = markRaw<workExperienceListType>([
@@ -24,7 +22,8 @@ const workExperienceList = markRaw<workExperienceListType>([
       '建立乙太坊交易所和與智能合約串接製作區塊鏈相關產品。',
       '使用Vue / Nuxt.js製作區塊鏈相關網站。',
       '使用web3.js與各種生態鏈跟區塊鏈合約進行溝通與操作。'
-    ]
+    ],
+    seniority: 1.5
   },
   {
     companyName: '樹人科技有限公司',
@@ -34,7 +33,8 @@ const workExperienceList = markRaw<workExperienceListType>([
       '串接H5遊戲API並製作手機版本的入口網站。',
       '製作後台管理網站，針對使用者資料進行操作。',
       '使用nuxt.js製作SSR網站，具有SEO效果。'
-    ]
+    ],
+    seniority: 1
   },
   {
     companyName: '氪龍有限公司',
@@ -44,17 +44,19 @@ const workExperienceList = markRaw<workExperienceListType>([
       '使用React / Next.js製作區塊鏈網站。',
       '為前端團隊分享串接合約跟區塊鏈遇到的問題。',
       '使用ant-pro框架來管理相關後台類型網站。'
-    ]
+    ],
+    seniority: 1
   },
   {
     companyName: '拓荒資本股份有限公司',
     position: 'Front-End Developer',
-    duration: '2022年7月 - 2022年3月',
+    duration: '2022年7月 - 2024年3月',
     responsibilities: [
       '負責公司官方網站的架設、更新和維護，確保網站可用性和優秀用戶體驗。',
       '參與從零開始的React Native應用開發項目，與團隊成員成功上架區塊練錢包應用程式，實現了良好的市場反饋和用戶體驗。',
       '與團隊合作建立和優化敏捷開發流程，提高了項目交付效率和質量。'
-    ]
+    ],
+    seniority: 2
   }
 ])
 </script>
@@ -88,9 +90,9 @@ const workExperienceList = markRaw<workExperienceListType>([
               :key="item.url"
               :href="item.url"
               target="_blank"
-              class="mx-2 px-7 py-3 md:px-9 md:py-4 font-medium md:font-semibold bg-gray-700 text-gray-50 text-sm rounded-md hover:bg-gray-50 hover:text-gray-700 transition ease-linear duration-500"
+              class="mx-2 px-7 py-3 md:px-9 md:py-4 font-medium md:font-semibold bg-gray-700 text-gray-50 text-sm rounded-md hover:bg-gray-400 transition ease-linear duration-500"
             >
-              <component :is="item.svg" />
+              <img class="size-6" :src="item.svg" :alt="item.url" />
             </a>
           </div>
         </div>
@@ -164,58 +166,81 @@ const workExperienceList = markRaw<workExperienceListType>([
         <p class="font-normal text-gray-500 text-xs md:text-base mb-20">
           Below is a summary of the places I studied
         </p>
-        <div class="flex flex-col lg:flex-row justify-between">
-          <div class="space-y-8 md:space-y-16 mb-16 md:mb-0">
+        <div>
+          <div class="flex flex-row justify-between">
+            <h6 class="w-1/3 font-medium text-gray-400 text-base uppercase">Company</h6>
+            <h6 class="w-1/3 font-medium text-gray-400 text-center text-base uppercase">
+              Position
+            </h6>
+            <h6 class="w-1/3 font-medium text-gray-400 text-center text-base uppercase">
+              Seniority
+            </h6>
+          </div>
+          <div class="flex flex-col justify-between">
+            <div
+              class="flex justify-between my-5"
+              v-for="item in workExperienceList"
+              :key="item.companyName + 1"
+            >
+              <div class="w-1/3">
+                {{ item.companyName }}
+                <span class="font-normal text-gray-300">/ {{ item.duration }}</span>
+                <ul class="list-inside list-disc ml-3">
+                  <li
+                    class="mt-3 text-sm text-gray-800"
+                    v-for="(items, key) in item.responsibilities"
+                    :key="key"
+                  >
+                    {{ items }}
+                  </li>
+                </ul>
+              </div>
+              <p class="w-1/3 font-normal text-gray-400 text-center text-base">
+                Front-End Developer
+              </p>
+              <p class="w-1/3 font-normal text-gray-400 text-center text-base">
+                {{ item.seniority }}
+              </p>
+            </div>
+          </div>
+          <!-- <div class="space-y-8 md:space-y-16 mb-16 md:mb-0">
             <h6 class="font-medium text-gray-400 text-base uppercase">Company</h6>
-
-            <p class="font-semibold text-gray-600 text-base">
-              Massa Fames <span class="font-normal text-gray-300">/ New York</span>
-            </p>
-
-            <p class="font-semibold text-gray-600 text-base">
-              Massa Fames <span class="font-normal text-gray-300">/ New York</span>
-            </p>
-
-            <p class="font-semibold text-gray-600 text-base">
-              Massa Fames <span class="font-normal text-gray-300">/ New York</span>
-            </p>
-
-            <p class="font-semibold text-gray-600 text-base">
-              Massa Fames <span class="font-normal text-gray-300">/ New York</span>
-            </p>
-
-            <p class="font-semibold text-gray-600 text-base">
-              Massa Fames <span class="font-normal text-gray-300">/ New York</span>
-            </p>
+            <div v-for="item in workExperienceList" :key="item.companyName + 1">
+              {{ item.companyName }}
+              <span class="font-normal text-gray-300">/ {{ item.duration }}</span>
+              <ul class="list-inside list-disc ml-3">
+                <li
+                  class="mt-3 text-sm text-gray-800"
+                  v-for="(items, key) in item.responsibilities"
+                  :key="key"
+                >
+                  {{ items }}
+                </li>
+              </ul>
+            </div>
           </div>
 
-          <div class="space-y-8 md:space-y-16 mb-16 md:mb-0">
+          <div class="space-y-32 md:space-y-16 mb-16 md:mb-0">
             <h6 class="font-medium text-gray-400 text-base uppercase">Position</h6>
-
-            <p class="font-normal text-gray-400 text-base">Junior Front-End Developer</p>
-
-            <p class="font-normal text-gray-400 text-base">Junior Front-End Developer</p>
-
-            <p class="font-normal text-gray-400 text-base">Junior Front-End Developer</p>
-
-            <p class="font-normal text-gray-400 text-base">Junior Front-End Developer</p>
-
-            <p class="font-normal text-gray-400 text-base">Junior Front-End Developer</p>
+            <p
+              v-for="item in workExperienceList"
+              :key="item.companyName + 2"
+              class="font-normal text-gray-400 text-base"
+            >
+              Front-End Developer
+            </p>
           </div>
 
-          <div class="space-y-8 md:space-y-16">
-            <h6 class="font-medium text-gray-400 text-base uppercase">Year</h6>
-
-            <p class="font-normal text-gray-400 text-base">2016</p>
-
-            <p class="font-normal text-gray-400 text-base">2016</p>
-
-            <p class="font-normal text-gray-400 text-base">2016</p>
-
-            <p class="font-normal text-gray-400 text-base">2016</p>
-
-            <p class="font-normal text-gray-400 text-base">2016</p>
-          </div>
+          <div class="space-y-32 md:space-y-16">
+            <h6 class="font-medium text-gray-400 text-base uppercase">Seniority</h6>
+            <p
+              v-for="item in workExperienceList"
+              :key="item.companyName + 3"
+              class="font-normal text-gray-400 text-base"
+            >
+              {{ item.seniority }}
+            </p>
+          </div> -->
         </div>
       </div>
     </section>
