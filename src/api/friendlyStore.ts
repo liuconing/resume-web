@@ -1,6 +1,7 @@
 import apiHandler from './api'
+const api = import.meta.env.VITE_API_KEY
 
-export const callFriendlyStoreURL = 'http://192.168.50.24:3000/api/friendly_store'
+export const callFriendlyStoreURL = `${api}/friendly_store`
 export const callFriendlyStore = () =>
   apiHandler({
     url: callFriendlyStoreURL,

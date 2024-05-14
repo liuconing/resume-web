@@ -1,12 +1,13 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import IndexView from '@/views/index/IndexView.vue'
 import AirQualityView from '@/views/AirQuality/AirQualityView.vue'
 import FriendlyRestaurantView from '@/views/FriendlyRestaurant/FriendlyRestaurantView.vue'
 import FortuneView from '@/views/Fortune/FortuneView.vue'
+import SolitaireView from '@/views/Solitaire/SolitaireView.vue'
 
 export const createAppRouter = () => {
   const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHashHistory(import.meta.env.BASE_URL),
     routes: [
       {
         path: '/',
@@ -27,6 +28,11 @@ export const createAppRouter = () => {
         path: '/fortune',
         name: 'Fortune',
         component: FortuneView
+      },
+      {
+        path: '/solitaire',
+        name: 'Solitaire',
+        component: SolitaireView
       }
     ]
   })

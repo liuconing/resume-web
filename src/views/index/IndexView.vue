@@ -2,7 +2,6 @@
 import { RouterLink } from 'vue-router'
 import { markRaw } from 'vue'
 import type { linkListType, workExperienceListType } from './type'
-
 const linkList = markRaw<linkListType>([
   {
     url: 'https://github.com/liuconing',
