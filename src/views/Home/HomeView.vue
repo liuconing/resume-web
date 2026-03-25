@@ -251,8 +251,18 @@ const workExperiences = markRaw<WorkExperienceList[]>([
             <h6 class="font-semibold text-gray-500 text-md mb-4">神明求籤</h6>
             <p class="text-gray-500 text-sm mb-4">祈福抽籤，神明指引未來方向</p>
             <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
-              <li>使用 Vue2</li>
+              <li>使用 Vue3</li>
               <li>使用 Vue transition 與 CSS 動畫切換效果</li>
+            </ul>
+          </RouterLink>
+
+          <RouterLink class="bg-gray-50 px-8 py-10 rounded-md h-full" to="/funding">
+            <h6 class="font-semibold text-gray-500 text-md mb-4">放貸機器人</h6>
+            <p class="text-gray-500 text-sm mb-4">以自動化策略管理資金配置</p>
+            <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
+              <li>使用 Vue3</li>
+              <li>使用 Element Plus</li>
+              <li>使用 TanStack Query 管理資料狀態</li>
             </ul>
           </RouterLink>
         </div>
