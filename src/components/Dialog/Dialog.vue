@@ -4,28 +4,16 @@
  */
 import { watch, onUnmounted } from 'vue'
 
-const props = withDefaults(
-  defineProps<{
-    modelValue: boolean
-    title?: string
-    /** 例如 28rem、440px */
-    maxWidth?: string
-    /** 點擊遮罩是否關閉 */
-    closeOnBackdrop?: boolean
-  }>(),
-  {
-    title: '',
-    maxWidth: '28rem',
-    closeOnBackdrop: true,
-  },
-)
+const modelValue = defineModel<boolean>({ required: true })
 
-const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
+const props = defineProps<{
+  title: string
+  maxWidth: string
+  closeOnBackdrop: boolean
 }>()
 
 const handleClose = () => {
-  emit('update:modelValue', false)
+  modelValue.value = false
 }
 
 const handleBackdropClick = () => {
@@ -33,21 +21,18 @@ const handleBackdropClick = () => {
 }
 
 const handleKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape' && props.modelValue) handleClose()
+  if (e.key === 'Escape' && modelValue.value) handleClose()
 }
 
-watch(
-  () => props.modelValue,
-  (open) => {
-    if (open) {
-      document.body.style.overflow = 'hidden'
-      window.addEventListener('keydown', handleKeydown)
-    } else {
-      document.body.style.overflow = ''
-      window.removeEventListener('keydown', handleKeydown)
-    }
-  },
-)
+watch(modelValue, (open) => {
+  if (open) {
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeydown)
+  } else {
+    document.body.style.overflow = ''
+    window.removeEventListener('keydown', handleKeydown)
+  }
+})
 
 onUnmounted(() => {
   document.body.style.overflow = ''

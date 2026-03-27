@@ -1,0 +1,265 @@
+.Home-enter-active,
+.Home-leave-active,
+.Start-enter-active,
+.Start-leave-active,
+.FortuneText-enter-active,
+.FortuneText-leave-active,
+.FortuneContent-enter-active,
+.FortuneContent-leave-active {
+  transition: opacity 2s ease-in-out;
+}
+.Home-enter,
+.Home-leave-to,
+.Start-enter,
+.Start-leave-to,
+.FortuneText-enter,
+.FortuneText-leave-to,
+.FortuneContent-enter,
+.FortuneContent-leave-to {
+  opacity: 0;
+}
+* {
+  font-family: 'Noto Serif TC', serif;
+}
+
+.Fortune_page {
+  position: fixed;
+  width: 100%;
+}
+#Fortune {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.35), black),
+    url(../../assets/image/fortune_bg.jpg);
+  background-size: 100% 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  .Home {
+    position: relative;
+    padding: 0 8%;
+    height: 100%;
+    h1 {
+      position: absolute;
+      right: 20%;
+      line-height: 120px;
+      width: 120px;
+      color: white;
+      font-size: 120px;
+      margin-top: 50px;
+      p {
+        font-size: 120px;
+      }
+    }
+    h2 {
+      font-size: 24px;
+      color: white;
+      font-weight: 900;
+      margin-bottom: 24px;
+    }
+    p {
+      font-size: 16px;
+      color: white;
+      margin: 5px 0;
+    }
+    .Fortune_step {
+      margin-bottom: 40px;
+      padding-top: 15%;
+    }
+    ul {
+      width: 370px;
+      li {
+        display: inline-block;
+        width: calc(100% / 3 - 16px);
+        margin: 8px;
+        border: 1px white solid;
+        color: white;
+        font-size: 16px;
+        text-align: center;
+        padding: 10px;
+        cursor: pointer;
+        &:hover {
+          color: #000;
+          background-color: white;
+        }
+        &.active {
+          color: #000;
+          background-color: white;
+        }
+      }
+    }
+  }
+  .button_box {
+    display: block;
+    position: absolute;
+    height: 130px;
+    width: 100%;
+    background-color: transparent;
+    padding-left: 180px;
+    transition: height 2s ease;
+    bottom: 0;
+    &.button_boxAnime {
+      height: 0;
+    }
+    .box_start {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 40px;
+      width: 355px;
+      height: 55px;
+      border: 1px white solid;
+      text-align: center;
+      line-height: 55px;
+      transition: all 0.8s ease;
+      cursor: pointer;
+      &:hover {
+        color: #000;
+        background-color: white;
+      }
+    }
+  }
+}
+.Start {
+  position: relative;
+  height: calc(100% - 188px);
+  padding: 0 8%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .Start_border {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 40px;
+    z-index: 1;
+    .line {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.3);
+      &:nth-of-type(1) {
+        width: 85vw;
+        height: 1px;
+        top: 10%;
+        left: 7%;
+      }
+      &:nth-of-type(3) {
+        width: 85vw;
+        height: 1px;
+        bottom: 10%;
+        left: 7%;
+      }
+      &:nth-of-type(2) {
+        width: 1px;
+        height: 50vh;
+        top: 17%;
+        left: 3.5%;
+      }
+      &:nth-of-type(4) {
+        width: 1px;
+        height: 50vh;
+        top: 17%;
+        right: 3.5%;
+      }
+    }
+    p {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 36px;
+      font-weight: 900;
+      &:nth-of-type(1) {
+        left: 40px;
+        top: 40px;
+      }
+      &:nth-of-type(2) {
+        right: 40px;
+        top: 40px;
+      }
+      &:nth-of-type(3) {
+        left: 40px;
+        bottom: 40px;
+      }
+      &:nth-of-type(4) {
+        right: 40px;
+        bottom: 40px;
+      }
+    }
+  }
+  .fortune_text {
+    position: relative;
+    z-index: 12;
+    transition: opacity 2s ease-in-out;
+    p {
+      letter-spacing: 35px;
+      text-align: center;
+      color: white;
+      font-weight: 900;
+    }
+    .text_top,
+    .text_bottom {
+      font-size: 24px;
+      text-align: center;
+    }
+    .text_content {
+      font-size: 240px;
+      margin: 60px 0;
+    }
+    &.textopacity {
+      opacity: 0;
+    }
+  }
+  .fortune_content {
+    position: relative;
+    z-index: 13;
+    width: 100%;
+    padding: 0 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .content_left {
+      width: 355px;
+      p {
+        color: white;
+        line-height: 24px;
+      }
+      .left_title {
+        font-size: 24px;
+        font-weight: 900;
+      }
+      .left_content {
+        font-size: 16px;
+        margin-top: 24px;
+        margin-bottom: 40px;
+      }
+      .Rebutton_box {
+        margin-top: 40px;
+        width: 350px;
+        height: 55px;
+        text-align: center;
+        line-height: 55px;
+        font-size: 24px;
+        color: white;
+        border: 1px white solid;
+        cursor: pointer;
+        transition: all 0.7s ease;
+        &:hover {
+          color: #000;
+          background-color: white;
+        }
+      }
+    }
+    .content_right {
+      writing-mode: vertical-rl;
+      h3 {
+        font-size: 16px;
+        color: white;
+      }
+      p {
+        font-size: 40px;
+        font-weight: 900;
+        color: white;
+        margin: 0 30px;
+      }
+    }
+  }
+}

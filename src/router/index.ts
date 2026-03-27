@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { HomeView } from '@/views/Home'
-import { FortuneView } from '@/views/Fortune'
-import { AirQualityView } from '@/views/AirQuality'
-import { FundingView } from '@/views/Funding'
+import { HomeView } from '@/views/home'
+import { FortuneView } from '@/views/fortune'
+import { AirQualityView } from '@/views/air-quality'
+import { FundingOverviewView } from '@/views/funding-overview'
+import { FundingLayout } from '@/views/funding'
+import { FundingHomeView } from '@/views/funding/home'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,16 +25,14 @@ const router = createRouter({
       component: AirQualityView,
     },
     {
+      path: '/funding-overview',
+      name: 'fundingOverview',
+      component: FundingOverviewView,
+    },
+    {
       path: '/funding',
-      name: 'funding',
-      component: FundingView,
-      children: [
-        // {
-        //   path: '/funding/list',
-        //   name: 'fundingList',
-        //   component: FundingListView,
-        // },
-      ],
+      component: FundingLayout,
+      children: [{ path: '/funding/home', component: FundingHomeView }],
     },
   ],
 })
