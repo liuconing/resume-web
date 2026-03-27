@@ -2,7 +2,7 @@
 import { useFundingDialogs } from '@/hooks'
 import { LoginDialog, RegisterDialog } from './components'
 
-const { dialogModels, openDialog } = useFundingDialogs()
+const { openDialog } = useFundingDialogs()
 
 const handelLogin = async () => {
   await new Promise((r) => setTimeout(r, 600))
@@ -96,8 +96,8 @@ const handelRegister = async () => {
       </article>
     </section>
 
-    <LoginDialog v-model="dialogModels.login" :onSubmit="handelLogin" />
-    <RegisterDialog v-model="dialogModels.register" :onSubmit="handelRegister" />
+    <LoginDialog :on-submit="handelLogin" />
+    <RegisterDialog :on-submit="handelRegister" />
   </div>
 </template>
 

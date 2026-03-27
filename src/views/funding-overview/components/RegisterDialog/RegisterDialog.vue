@@ -3,7 +3,7 @@ import { reactive, ref } from 'vue'
 import { Dialog, DialogPasswordToggle } from '@/components'
 import { useFundingDialogs } from '@/hooks'
 
-const { dialogModels, closeDialogIf } = useFundingDialogs()
+const { dialogModel, closeDialogIf } = useFundingDialogs('register')
 
 const props = defineProps<{
   onSubmit: () => Promise<void>
@@ -28,12 +28,12 @@ const submitRegister = async () => {
   }
 
   await props.onSubmit()
-  closeDialogIf('register')
+  closeDialogIf()
 }
 </script>
 
 <template>
-  <Dialog v-model="dialogModels.register" title="註冊新帳號" max-width="28.75rem" close-on-backdrop>
+  <Dialog v-model="dialogModel" title="註冊新帳號" max-width="28.75rem" close-on-backdrop>
     <form class="auth-form" @submit.prevent="submitRegister">
       <label class="field">
         <span class="field-label">Email</span>
@@ -73,7 +73,7 @@ const submitRegister = async () => {
       </label>
     </form>
     <template #footer>
-      <button type="button" class="btn btn-ghost" @click="closeDialogIf('register')">取消</button>
+      <button type="button" class="btn btn-ghost" @click="closeDialogIf">取消</button>
       <button type="button" class="btn btn-primary" @click="submitRegister">註冊</button>
     </template>
   </Dialog>

@@ -3,7 +3,7 @@ import { ref, reactive } from 'vue'
 import { Dialog, DialogPasswordToggle } from '@/components'
 import { useFundingDialogs } from '@/hooks'
 
-const { dialogModels, closeDialogIf } = useFundingDialogs()
+const { dialogModel, closeDialogIf } = useFundingDialogs('login')
 
 const props = defineProps<{
   onSubmit: () => Promise<void>
@@ -19,12 +19,12 @@ const loginForm = reactive({
 const submitLogin = async () => {
   if (!loginForm.email || !loginForm.password) return
   await props.onSubmit()
-  closeDialogIf('login')
+  closeDialogIf()
 }
 </script>
 
 <template>
-  <Dialog v-model="dialogModels.login" title="使用者登入" max-width="27.5rem" close-on-backdrop>
+  <Dialog v-model="dialogModel" title="使用者登入" max-width="27.5rem" close-on-backdrop>
     <form class="auth-form" @submit.prevent="submitLogin">
       <label class="field">
         <span class="field-label">Email</span>
@@ -50,7 +50,7 @@ const submitLogin = async () => {
       </label>
     </form>
     <template #footer>
-      <button type="button" class="btn btn-ghost" @click="closeDialogIf('login')">取消</button>
+      <button type="button" class="btn btn-ghost" @click="closeDialogIf">取消</button>
       <button type="button" class="btn btn-primary" @click="submitLogin">登入</button>
     </template>
   </Dialog>
