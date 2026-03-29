@@ -21,6 +21,7 @@
     "@tanstack/vue-query": "^5.92.9",
     "axios": "^1.13.6",
     "element-plus": "^2.13.6",
+    "lodash": "^4.17.23",
     "pinia": "^3.0.4",
     "tailwindcss": "^4.1.18",
     "uuid": "^13.0.0",

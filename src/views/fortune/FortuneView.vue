@@ -154,5 +154,5 @@ const handleResetFortune = () => {
   </div>
 </template>
 <style lang="scss" scoped>
-@import './Fortune.scss';
+@use './Fortune.scss';
 </style>
