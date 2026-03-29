@@ -1,5 +1,6 @@
 import { useQuery, type UseQueryOptions, type QueryKey } from '@/lib/vue-query'
 import { uuid } from '@/lib/uuid'
+import { handleGlobalError, type GlobalError } from './useGlobalErrorHandler'
 
 type UseQueryBaseOptions<TData, TError> = Omit<
   UseQueryOptions<TData, TError, TData, QueryKey>,
@@ -41,7 +42,8 @@ export function useFetch<TData, TParams, TError extends Error = Error>(
         result = await queryFn(params)
         options?.onSuccess?.(result)
         return result
-      } catch (err) {
+      } catch (err: unknown) {
+        handleGlobalError(err as GlobalError)
         error = formatError(err) as TError
         options?.onError?.(error)
         if (!options?.onError) {

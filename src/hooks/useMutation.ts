@@ -2,6 +2,7 @@ import { useMutation as useReactQueryMutation, type MutationObserverOptions } fr
 
 import { uuid } from '@/lib/uuid'
 import { isEmpty } from '@/lib/lodash'
+import { handleGlobalError, type GlobalError } from './useGlobalErrorHandler'
 
 type MutationOptionsCore<TData, TParams> = MutationObserverOptions<TData, unknown, TParams, unknown>
 export interface UseMutationOptions<TData, TParams> extends MutationOptionsCore<TData, TParams> {
@@ -31,8 +32,9 @@ export function useMutation<TData, TParams = void>(
         result = await fetchFn(params)
 
         return result
-      } catch (error) {
-        throw error
+      } catch (err: unknown) {
+        handleGlobalError(err as GlobalError)
+        throw err
       } finally {
         if (enableLogger) {
           console.groupCollapsed(

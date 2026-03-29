@@ -1,5 +1,6 @@
 export * from './useExclusiveDialogs'
 export * from './useFetch'
+export * from './useGlobalErrorHandler'
 export * from './useFundingDialogs'
 export * from './useNavigator'
 export * from './useMutation'
