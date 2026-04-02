@@ -1,28 +1,19 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { useFetch } from '@/hooks'
 import { getAirQualityIndexUsecase } from '@/domain/usecase'
 import type { AirQualityIndex } from '@/domain/repository'
 
+type AqiStyle = { bg: string; status: string }
+type AirQualityAreaRow = AirQualityIndex & { aqiStyle: AqiStyle }
+
 const targetElement = ref<HTMLElement | null>(null)
 const selectCounty = ref<string>('')
-const selectedArea = ref<AirQualityIndex | null>(null)
+const selectedArea = ref<AirQualityAreaRow | null>(null)
 
 const { data: airQualityData, isLoading } = useFetch(getAirQualityIndexUsecase, null)
 
-// 列出所有城市
-const citys = computed(() => {
-  if (!airQualityData.value) return []
-  return [...new Set(airQualityData.value.map((item) => item.county))].sort()
-})
-
-// 選定城市後的地區列表
-const areas = computed(() => {
-  if (!airQualityData.value || !selectCounty.value) return []
-  return airQualityData.value.filter((item) => item.county === selectCounty.value)
-})
-
-// 依 AQI 數值回傳對應背景色與狀態
+// 依 AQI 數值回傳對應背景色與狀態（須在 areas 之前定義）
 const getAqiStyle = (aqi: string) => {
   const num = parseInt(aqi, 10) || 0
   if (num <= 50) return { bg: '#95f084', status: '良好' }
@@ -33,13 +24,30 @@ const getAqiStyle = (aqi: string) => {
   return { bg: '#ad1774', status: '危害' }
 }
 
+// 列出所有城市
+const citys = computed(() => {
+  if (!airQualityData.value) return []
+  return [...new Set(airQualityData.value.map((item) => item.county))].sort()
+})
+
+// 選定城市後的地區列表（含每列 AQI 樣式，避免 template 重複計算）
+const areas = computed(() => {
+  if (!airQualityData.value || !selectCounty.value) return []
+  return airQualityData.value
+    .filter((item) => item.county === selectCounty.value)
+    .map((item) => ({
+      ...item,
+      aqiStyle: getAqiStyle(item.aqi),
+    }))
+})
+
 const scrollToElement = () => {
   nextTick(() => {
     targetElement.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   })
 }
 
-const handleSelectArea = (item: AirQualityIndex) => {
+const handleSelectArea = (item: AirQualityAreaRow) => {
   selectedArea.value = item
   scrollToElement()
 }
@@ -129,12 +137,12 @@ const handleSelectArea = (item: AirQualityIndex) => {
                 :key="item.siteid"
                 class="cute-table-row"
                 :class="{ 'cute-table-row--active': selectedArea?.siteid === item.siteid }"
-                :style="{ '--aqi-bg': getAqiStyle(item.aqi).bg }"
+                :style="{ '--aqi-bg': item.aqiStyle.bg }"
                 @click="handleSelectArea(item)"
               >
                 <td class="cute-cell-name">{{ item.sitename }}</td>
                 <td class="cute-cell-aqi">{{ item.aqi }}</td>
-                <td class="cute-cell-status">{{ getAqiStyle(item.aqi).status }}</td>
+                <td class="cute-cell-status">{{ item.aqiStyle.status }}</td>
                 <td>{{ item.o3 }}</td>
                 <td>{{ item.pm10 }}</td>
                 <td>{{ item['pm2.5'] }}</td>

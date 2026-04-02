@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
+import type { RegisterReq } from '@/domain/repository'
 import { Button, Dialog, DialogPasswordToggle, TextInput } from '@/components'
 import { useFundingDialogs } from '@/hooks'
 
 const { dialogModel, closeDialogIf } = useFundingDialogs('register')
 
 const props = defineProps<{
-  onSubmit: () => Promise<void>
+  onSubmit: (data: RegisterReq) => Promise<void>
 }>()
 
 const showRegisterPassword = ref(false)
 const showRegisterConfirm = ref(false)
+const formError = ref('')
 
 const registerForm = reactive({
   email: '',
@@ -18,16 +20,26 @@ const registerForm = reactive({
   confirmPassword: '',
 })
 
+const clearFormError = () => {
+  formError.value = ''
+}
+
 const submitRegister = async () => {
-  if (
-    !registerForm.email ||
-    !registerForm.password ||
-    registerForm.password !== registerForm.confirmPassword
-  ) {
+  if (!registerForm.email) {
+    formError.value = '請輸入 Email'
+    return
+  }
+  if (!registerForm.password) {
+    formError.value = '請輸入密碼'
+    return
+  }
+  if (registerForm.password !== registerForm.confirmPassword) {
+    formError.value = '兩次密碼不一致'
     return
   }
 
-  await props.onSubmit()
+  formError.value = ''
+  await props.onSubmit({ ...registerForm })
   closeDialogIf()
 }
 </script>
@@ -35,12 +47,21 @@ const submitRegister = async () => {
 <template>
   <Dialog v-model="dialogModel" title="註冊新帳號" max-width="28.75rem" close-on-backdrop>
     <form class="flex flex-col gap-4.5" @submit.prevent="submitRegister">
+      <p
+        v-if="formError"
+        class="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700"
+        role="alert"
+        aria-live="polite"
+      >
+        {{ formError }}
+      </p>
       <label class="flex flex-col gap-1.5">
         <span class="text-[0.8125rem] font-semibold text-slate-600">Email</span>
         <TextInput
           v-model.trim="registerForm.email"
           type="email"
           autocomplete="email"
+          @update:model-value="clearFormError"
         />
       </label>
       <label class="flex flex-col gap-1.5">
@@ -53,6 +74,7 @@ const submitRegister = async () => {
             grow
             minlength="8"
             maxlength="12"
+            @update:model-value="clearFormError"
           />
           <DialogPasswordToggle v-model="showRegisterPassword" />
         </div>
@@ -66,6 +88,7 @@ const submitRegister = async () => {
             autocomplete="new-password"
             grow
             @keydown.enter.prevent="submitRegister"
+            @update:model-value="clearFormError"
           />
           <DialogPasswordToggle v-model="showRegisterConfirm" />
         </div>

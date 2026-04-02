@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
 import { type LoginUsecaseDto } from '@/domain/usecase'
 import { Button, Dialog, DialogPasswordToggle, TextInput } from '@/components'
 import { useFundingDialogs } from '@/hooks'
@@ -8,8 +7,6 @@ import { useFundingDialogs } from '@/hooks'
 const props = defineProps<{
   onSubmit: (data: LoginUsecaseDto) => Promise<void>
 }>()
-
-const router = useRouter()
 
 const { dialogModel, closeDialogIf } = useFundingDialogs('login')
 
@@ -22,12 +19,15 @@ const loginFormBase = {
 
 const loginForm = reactive({ ...loginFormBase })
 
+const resetLoginForm = () => {
+  Object.assign(loginForm, loginFormBase)
+}
+
 const submitLogin = async () => {
   if (!loginForm.email || !loginForm.password) return
   await props.onSubmit(loginForm)
-  Object.assign(loginForm, loginFormBase)
+  resetLoginForm()
   closeDialogIf()
-  router.push('/funding')
 }
 </script>
 

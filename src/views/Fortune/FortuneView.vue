@@ -66,6 +66,20 @@ const handleResetFortune = () => {
   isFortuneTextVisible.value = true
   isFortuneContentVisible.value = true
 }
+
+const handleToggleCategory = (key: number) => {
+  if (selectedCategoryIndex.value === key + 1) {
+    selectedCategoryIndex.value = 0
+    return
+  }
+  selectedCategoryIndex.value = key + 1
+}
+
+const handleCategoryKeydown = (event: KeyboardEvent, key: number) => {
+  if (event.key !== 'Enter' && event.key !== ' ') return
+  event.preventDefault()
+  handleToggleCategory(key)
+}
 </script>
 
 <template>
@@ -88,20 +102,16 @@ const handleResetFortune = () => {
           <h2>求籤類別</h2>
           <ul>
             <li
-              v-for="(n, key) in FORTUNE_CATEGORIES"
-              @click="
-                () => {
-                  if (selectedCategoryIndex === key + 1) {
-                    selectedCategoryIndex = 0
-                    return
-                  }
-                  selectedCategoryIndex = key + 1
-                }
-              "
-              :class="{ active: selectedCategoryIndex == key + 1 }"
+              v-for="(item, key) in FORTUNE_CATEGORIES"
               :key="key"
+              role="button"
+              tabindex="0"
+              :class="{ active: selectedCategoryIndex == key + 1 }"
+              :aria-pressed="selectedCategoryIndex === key + 1"
+              @click="handleToggleCategory(key)"
+              @keydown="handleCategoryKeydown($event, key)"
             >
-              {{ n }}
+              {{ item }}
             </li>
           </ul>
         </div>
@@ -135,7 +145,9 @@ const handleResetFortune = () => {
                 此籤家道不安 須防人口舌 怨恨臨門 財有失 逢貴人提挈方保 漸亨不成 多口舌 問婚訟平
                 病有驚 財物耗散 名利空虛 只宜守舊 不利遠行 防親人侵損也
               </p>
-              <div class="Rebutton_box" @click="handleResetFortune">重新求籤</div>
+              <button type="button" class="Rebutton_box" @click="handleResetFortune">
+                重新求籤
+              </button>
             </div>
             <div class="content_right">
               <h3>第 {{ fortuneNumber }} 籤 【 戊 辛 】 {{ fortuneName }}</h3>
@@ -149,7 +161,7 @@ const handleResetFortune = () => {
       </div>
     </Transition>
     <div class="button_box" :class="{ button_boxAnime: !isHomeVisible }">
-      <p class="box_start" @click="handleStartFortune">開始求籤</p>
+      <button type="button" class="box_start" @click="handleStartFortune">開始求籤</button>
     </div>
   </div>
 </template>

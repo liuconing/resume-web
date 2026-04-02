@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
-// import { clearFundingsToken } from "../../api/client";
 
 const route = useRoute()
 const router = useRouter()
@@ -11,13 +10,12 @@ const router = useRouter()
  */
 
 function logout() {
-  // clearFundingsToken();
   ElNotification({
     title: '登出成功',
     message: '已登出使用者管理頁',
     type: 'success',
   })
-  router.push('/bot-fundings')
+  router.push('/funding-overview')
 }
 </script>
 

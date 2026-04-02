@@ -101,7 +101,7 @@
     &.button_boxAnime {
       height: 0;
     }
-    .box_start {
+    button.box_start {
       color: white;
       font-size: 24px;
       font-weight: bold;
@@ -113,6 +113,9 @@
       line-height: 55px;
       transition: all 0.8s ease;
       cursor: pointer;
+      background: transparent;
+      font-family: inherit;
+      padding: 0;
       &:hover {
         color: #000;
         background-color: white;
@@ -231,7 +234,7 @@
         margin-top: 24px;
         margin-bottom: 40px;
       }
-      .Rebutton_box {
+      button.Rebutton_box {
         margin-top: 40px;
         width: 350px;
         height: 55px;
@@ -242,6 +245,9 @@
         border: 1px white solid;
         cursor: pointer;
         transition: all 0.7s ease;
+        background: transparent;
+        font-family: inherit;
+        padding: 0;
         &:hover {
           color: #000;
           background-color: white;

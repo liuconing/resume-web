@@ -1,76 +1,29 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import { ElNotification } from 'element-plus'
-// import { fetchFundingsOverview } from '../../api/client'
 
 const loading = ref(false)
 const overview = reactive({
   totalAssets: 0,
-  assets: [],
+  assets: [] as { currency: string; amount: number }[],
   idleFunds: 0,
   interestIncome: 0,
 })
 
-/**
- * 取得read Error相關資料。
- * @param error - 錯誤物件。
- */
-
-function readError(error: any) {
-  return error?.response?.data?.message || error?.message || '請求失敗'
-}
-
-/**
- * 格式化format Amount內容供顯示或輸出。
- * @param value - 輸入值。
- */
-
-function formatAmount(value: number) {
+const formatAmount = (value: number) => {
   return Number(value || 0).toLocaleString('zh-TW', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 8,
   })
 }
 
-/**
- * 處理reload邏輯。
- */
-
-async function reload() {
-  // loading.value = true
-  // try {
-  //   const response = await fetchFundingsOverview()
-  //   const data = response?.data || {}
-  //   overview.totalAssets = Number(data.totalAssets || 0)
-  //   overview.idleFunds = Number(data.idleFunds || 0)
-  //   overview.interestIncome = Number(data.interestIncome || 0)
-  //   overview.assets = Array.isArray(data.assets) ? data.assets : []
-  //   ElNotification({
-  //     title: '載入成功',
-  //     message: '資金總覽已更新',
-  //     type: 'success',
-  //   })
-  // } catch (error) {
-  //   ElNotification({
-  //     title: '載入失敗',
-  //     message: readError(error),
-  //     type: 'error',
-  //   })
-  // } finally {
-  //   loading.value = false
-  // }
-}
-
-onMounted(async () => {
-  await reload()
-})
+const handleReload = async () => {}
 </script>
 
 <template>
   <div class="page">
     <div class="toolbar">
       <h2>資金總覽</h2>
-      <el-button type="primary" :loading="loading" @click="reload">重新整理</el-button>
+      <el-button type="primary" :loading="loading" @click="handleReload">重新整理</el-button>
     </div>
 
     <el-row :gutter="16">

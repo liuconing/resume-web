@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { markRaw } from 'vue'
+import { computed, markRaw } from 'vue'
 import type { Links, WorkExperienceList } from './type'
 
 const links = markRaw<Links[]>([
@@ -69,6 +69,9 @@ const workExperiences = markRaw<WorkExperienceList[]>([
     seniority: 1,
   },
 ])
+
+/** 履歷顯示為新到舊，不突變原陣列（避免 template 內 reverse() 重複改動資料）。 */
+const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse())
 </script>
 
 <template>
@@ -189,7 +192,7 @@ const workExperiences = markRaw<WorkExperienceList[]>([
           <div class="flex flex-col justify-between">
             <div
               class="flex justify-between my-5"
-              v-for="item in workExperiences.reverse()"
+              v-for="item in workExperiencesNewestFirst"
               :key="item.companyName"
             >
               <div class="w-full">
