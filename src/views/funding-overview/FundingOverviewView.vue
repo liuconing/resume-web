@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import {
-  loginUsecase,
-  registerUsecase,
-  type LoginUsecaseDto,
-} from '@/domain/usecase'
+import { loginUsecase, registerUsecase, type LoginUsecaseDto } from '@/domain/usecase'
 import type { RegisterReq } from '@/domain/repository'
 import { Button } from '@/components'
 import { useFundingDialogs, useMutation } from '@/hooks'
@@ -61,16 +57,14 @@ const handleRegister = async (data: RegisterReq) => {
     />
 
     <section class="relative z-10 mx-auto max-w-6xl pb-12 text-center">
-      <p
-        class="mb-4 inline-block rounded-full bg-indigo-500/12 px-3.5 py-1.5 text-xs font-semibold tracking-wider text-indigo-700"
+      <h1
+        class="mb-4 text-[clamp(1.75rem,4vw,2.5rem)] font-extrabold leading-tight tracking-tight text-slate-900"
       >
-        DeFi · 自動化
-      </p>
-      <h1 class="mb-4 text-[clamp(1.75rem,4vw,2.5rem)] font-extrabold leading-tight tracking-tight text-slate-900">
-        智能放貸機器人
+        E-Money智能放貸機器人
       </h1>
       <p class="mx-auto mb-8 max-w-xl text-[1.0625rem] leading-relaxed text-slate-600">
-        以自動化策略管理資金配置，追蹤市場利率與放貸績效，協助你在不同幣種市場中提升資金使用效率。
+        以自動化策略管理資金配置，追蹤市場利率與放貸績效，協助你在不同幣種市場中提升資金使用效率。<br />
+        使用者可以透過E-Money智能放貸機器人，管理自己的資金配置，並且可以透過機器人自動化管理自己的資金配置。
       </p>
       <div class="flex flex-wrap justify-center gap-3">
         <Button variant="primary" @click="openDialog('login')">登入</Button>
@@ -78,9 +72,7 @@ const handleRegister = async (data: RegisterReq) => {
       </div>
     </section>
 
-    <section
-      class="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-3"
-    >
+    <section class="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-3">
       <FundingOverviewFeatureCard
         v-for="card in featureCards"
         :key="card.title"

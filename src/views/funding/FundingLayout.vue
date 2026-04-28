@@ -24,10 +24,10 @@ function logout() {
     <el-aside width="220px" class="fundings-aside">
       <div class="brand">Fundings Console</div>
       <el-menu :default-active="route.path" router>
-        <el-menu-item index="/fundings">我的總覽</el-menu-item>
-        <el-menu-item index="/fundings/settings">機器人設定</el-menu-item>
-        <el-menu-item index="/fundings/market">市場行情</el-menu-item>
-        <el-menu-item index="/fundings/loans">放款總覽</el-menu-item>
+        <el-menu-item index="/funding/home">我的總覽</el-menu-item>
+        <el-menu-item index="/funding/bot-settings">機器人設定</el-menu-item>
+        <el-menu-item index="/funding/market">市場行情</el-menu-item>
+        <el-menu-item index="/funding/loans">放款總覽</el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>
