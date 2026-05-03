@@ -20,6 +20,7 @@
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/vue-query": "^5.92.9",
     "axios": "^1.13.6",
+    "bignumber.js": "^11.0.0",
     "element-plus": "^2.13.6",
     "lodash": "^4.17.23",
     "pinia": "^3.0.4",

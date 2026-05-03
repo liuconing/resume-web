@@ -1,4 +1,4 @@
-import { axiosBase } from '@/lib/axios'
+import { axiosBase, type PpsApiReturn } from '@/lib/axios'
 
 export interface LoginReq {
   email: string
@@ -15,7 +15,7 @@ export interface LoginRes {
   }
 }
 
-export const loginRepo = async (req: LoginReq): Promise<LoginRes> => {
+export const loginRepo = async (req: LoginReq): Promise<PpsApiReturn<LoginRes>> => {
   const res = await axiosBase.post('/fundings/auth/login', req)
   return res.data
 }

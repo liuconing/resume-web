@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
-
+import { removeLocalStorageUsecase } from '@/domain/usecase'
+import { useMutation } from '@/hooks/useMutation'
 const route = useRoute()
 const router = useRouter()
+
+const { mutate: logoutMutation } = useMutation(removeLocalStorageUsecase)
 
 /**
  * 處理logout邏輯。
@@ -15,6 +18,7 @@ function logout() {
     message: '已登出使用者管理頁',
     type: 'success',
   })
+  logoutMutation()
   router.push('/funding-overview')
 }
 </script>

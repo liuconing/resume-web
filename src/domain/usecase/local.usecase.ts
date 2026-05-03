@@ -20,6 +20,6 @@ export const setLocalStorageUsecase = (data: any) => {
 /**
  * 移除 localStorage
  */
-export const removeLocalStorageUsecase = () => {
+export const removeLocalStorageUsecase = async () => {
   clearLocalStorageRepo()
 }

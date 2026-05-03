@@ -39,11 +39,13 @@ const featureCards: {
   },
 ]
 
+/** 處理登入邏輯。 */
 const handleLogin = async (data: LoginUsecaseDto) => {
   await loginMutation(data)
   await router.push('/funding')
 }
 
+/** 處理註冊邏輯。 */
 const handleRegister = async (data: RegisterReq) => {
   await registerMutation(data)
 }

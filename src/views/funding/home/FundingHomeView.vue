@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, watch, reactive, ref } from 'vue'
+import { useFetch } from '@/hooks'
+import { BigNumber } from '@/lib/bigNumber'
+import { getFundingsOverviewUsecase } from '@/domain/usecase'
 
+const { data: overviewData } = useFetch(getFundingsOverviewUsecase, undefined)
 const loading = ref(false)
 const overview = reactive({
   totalAssets: 0,
@@ -10,11 +14,12 @@ const overview = reactive({
 })
 
 const formatAmount = (value: number) => {
-  return Number(value || 0).toLocaleString('zh-TW', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 8,
-  })
+  return BigNumber(value || 0).toFormat(2, BigNumber.ROUND_HALF_UP)
 }
+
+watch(overviewData, (newData) => {
+  console.log(newData)
+})
 
 const handleReload = async () => {}
 </script>
