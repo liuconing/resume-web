@@ -1,6 +1,25 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
-import { ElNotification } from 'element-plus'
+import { ElNotification } from '@/lib/element-plus'
+import { useFetch } from '@/hooks'
+import { formatAmount, formatTime } from '@/utils'
+import {
+  getFundingsSettingsUsecase,
+  getFundingsBotStatusUsecase,
+  getFundingsBotLogsUsecase,
+} from '@/domain/usecase'
+
+useFetch(getFundingsSettingsUsecase, null, {
+  onSuccess: (data) => {
+    Object.assign(settingsData, data)
+  },
+})
+
+const { data: botStatusData } = useFetch(getFundingsBotStatusUsecase, null, {
+  onSuccess: (data) => {
+    Object.assign(status, data)
+  },
+})
 
 // 支援的 funding 幣種顯示清單。
 const currencyOptions = ['TESTUSDT', 'TESTUSD', 'USDT', 'USD']
@@ -18,21 +37,14 @@ const loadingRuntime = ref(false)
 const loadingLogs = ref(false)
 const loadingManualTick = ref(false)
 
-const form = reactive({
+const settingsData = reactive({
   apiKey: '',
   apiSecret: '',
+  botConfig: {},
   botEnabled: false,
+  hasCredentials: false,
   reserveAmount: 0,
-  botConfig: {
-    strategyId: 'market-best-executable-apy-v2',
-    strategyMode: 'BEST_EXECUTION',
-    currency: 'TESTUSD',
-    minAmount: 150,
-    period: 120,
-    minDailyRate: 0.000001,
-    autoRelist: false,
-    tickIntervalSec: 30,
-  },
+  updatedAt: '',
 })
 
 const status = reactive({
@@ -80,19 +92,10 @@ function normalizeStrategyMode(value) {
 }
 
 const strategyModeHint = computed(() =>
-  form.botConfig.strategyMode === 'HIGH_RATE_WAIT'
+  settingsData.botConfig.strategyMode === 'HIGH_RATE_WAIT'
     ? '高利率等待模式會提高利率權重、放寬等待時間，偏向掛在較高年化價位等待市場追價成交。'
     : '最佳成交模式會優先考慮成交機率與等待時間，選擇目前較容易成交的最佳方案。',
 )
-
-/**
- * 清理clear Whitespace相關資料。
- * @param value - 輸入值。
- */
-
-function clearWhitespace(value) {
-  return String(value || '').replace(/\s+/g, '')
-}
 
 /**
  * 處理sanitize Setting Field邏輯。
@@ -141,40 +144,12 @@ function notifyError(title, error) {
 }
 
 /**
- * 格式化format Amount內容供顯示或輸出。
- * @param value - 輸入值。
- */
-
-function formatAmount(value) {
-  return Number(value || 0).toLocaleString('zh-TW', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 8,
-  })
-}
-
-/**
  * 格式化format Rate內容供顯示或輸出。
  * @param value - 輸入值。
  */
 
 function formatRate(value) {
   return `${(Number(value || 0) * 100).toFixed(6)}%`
-}
-
-/**
- * 格式化format Time內容供顯示或輸出。
- * @param value - 輸入值。
- */
-
-function formatTime(value) {
-  if (!value) {
-    return '-'
-  }
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) {
-    return '-'
-  }
-  return date.toLocaleString('zh-TW', { hour12: false })
 }
 
 /**
@@ -210,20 +185,21 @@ function statusTagType(input) {
 
 // 將設定 API 回傳資料同步到前端表單。
 function applySettings(data = {}) {
-  form.apiKey = clearWhitespace(data.apiKey)
-  form.apiSecret = clearWhitespace(data.apiSecret)
-  form.botEnabled = Boolean(data.botEnabled)
-  form.reserveAmount = Number(data.reserveAmount || 0)
-  form.botConfig = {
-    strategyId: String(data.botConfig?.strategyId || 'market-best-executable-apy-v2'),
-    strategyMode: normalizeStrategyMode(data.botConfig?.strategyMode || 'BEST_EXECUTION'),
-    currency: String(data.botConfig?.currency || 'TESTUSD'),
-    minAmount: Number(data.botConfig?.minAmount || 150),
-    period: Number(data.botConfig?.period || 120),
-    minDailyRate: Number(data.botConfig?.minDailyRate || 0.000001),
-    autoRelist: Boolean(data.botConfig?.autoRelist),
-    tickIntervalSec: Number(data.botConfig?.tickIntervalSec || 30),
-  }
+  console.log('applySettings =>', data)
+  // form.apiKey = data.apiKey
+  // form.apiSecret = data.apiSecret
+  // form.botEnabled = Boolean(data.botEnabled)
+  // form.reserveAmount = Number(data.reserveAmount || 0)
+  // form.botConfig = {
+  //   strategyId: String(data.botConfig?.strategyId || 'market-best-executable-apy-v2'),
+  //   strategyMode: normalizeStrategyMode(data.botConfig?.strategyMode || 'BEST_EXECUTION'),
+  //   currency: String(data.botConfig?.currency || 'TESTUSD'),
+  //   minAmount: Number(data.botConfig?.minAmount || 150),
+  //   period: Number(data.botConfig?.period || 120),
+  //   minDailyRate: Number(data.botConfig?.minDailyRate || 0.000001),
+  //   autoRelist: Boolean(data.botConfig?.autoRelist),
+  //   tickIntervalSec: Number(data.botConfig?.tickIntervalSec || 30),
+  // }
 }
 
 // 將 runtime API 回傳資料同步到狀態卡片。
@@ -263,8 +239,7 @@ function applyStatus(statusData = {}) {
 async function loadSettings(notify = false) {
   loadingRead.value = true
   try {
-    const response = await fetchFundingsSettings()
-    applySettings(response?.data || {})
+    applySettings(settingsData.value || {})
     if (notify) {
       notifySuccess('讀取完成', '機器人設定已更新。')
     }
@@ -283,8 +258,7 @@ async function loadSettings(notify = false) {
 async function loadBotStatus(notify = false) {
   loadingRuntime.value = true
   try {
-    const response = await fetchFundingsBotStatus()
-    applyStatus(response?.data || {})
+    applyStatus(botStatusData?.value || {})
     if (notify) {
       notifySuccess('讀取完成', 'Bot 狀態已更新。')
     }
@@ -301,36 +275,36 @@ async function loadBotStatus(notify = false) {
  * @param notify - 函式輸入參數。
  */
 
-async function loadBotLogs(page = logsPagination.page, notify = false) {
-  loadingLogs.value = true
-  try {
-    const response = await fetchFundingsBotLogs({
-      page,
-      limit: logsPagination.limit,
-    })
-    const data = response?.data || {}
-    logs.value = Array.isArray(data.items) ? data.items : []
-    logsPagination.page = Number(data.page || page || 1)
-    logsPagination.limit = Number(data.limit || logsPagination.limit)
-    logsPagination.total = Number(data.total || 0)
-    if (notify) {
-      notifySuccess('讀取完成', '最近執行紀錄已更新。')
-    }
-  } catch (error) {
-    notifyError('讀取紀錄失敗', error)
-  } finally {
-    loadingLogs.value = false
-  }
-}
+// async function loadBotLogs(page = logsPagination.page, notify = false) {
+//   loadingLogs.value = true
+//   try {
+//     const response = await fetchFundingsBotLogs({
+//       page,
+//       limit: logsPagination.limit,
+//     })
+//     const data = response?.data || {}
+//     logs.value = Array.isArray(data.items) ? data.items : []
+//     logsPagination.page = Number(data.page || page || 1)
+//     logsPagination.limit = Number(data.limit || logsPagination.limit)
+//     logsPagination.total = Number(data.total || 0)
+//     if (notify) {
+//       notifySuccess('讀取完成', '最近執行紀錄已更新。')
+//     }
+//   } catch (error) {
+//     notifyError('讀取紀錄失敗', error)
+//   } finally {
+//     loadingLogs.value = false
+//   }
+// }
 
 /**
  * 取得load Bot Runtime相關資料。
  * @param notify - 函式輸入參數。
  */
 
-async function loadBotRuntime(notify = false) {
-  await Promise.all([loadBotStatus(notify), loadBotLogs(logsPagination.page, notify)])
-}
+// async function loadBotRuntime(notify = false) {
+//   await Promise.all([loadBotStatus(notify), loadBotLogs(logsPagination.page, notify)])
+// }
 
 /**
  * 處理handle Logs Page Change流程。
@@ -353,113 +327,113 @@ async function refreshLogs() {
  * 更新save Settings相關資料。
  */
 
-async function saveSettings() {
-  sanitizeSettingField('apiKey')
-  sanitizeSettingField('apiSecret')
-  loadingSaveApi.value = true
-  try {
-    await updateFundingsSettings({
-      apiKey: form.apiKey,
-      apiSecret: form.apiSecret,
-    })
-    notifySuccess('儲存完成', 'API 憑證已更新。')
-    await loadBotRuntime(false)
-  } catch (error) {
-    notifyError('儲存 API 憑證失敗', error)
-  } finally {
-    loadingSaveApi.value = false
-  }
-}
+// async function saveSettings() {
+//   sanitizeSettingField('apiKey')
+//   sanitizeSettingField('apiSecret')
+//   loadingSaveApi.value = true
+//   try {
+//     await updateFundingsSettings({
+//       apiKey: form.apiKey,
+//       apiSecret: form.apiSecret,
+//     })
+//     notifySuccess('儲存完成', 'API 憑證已更新。')
+//     await loadBotRuntime(false)
+//   } catch (error) {
+//     notifyError('儲存 API 憑證失敗', error)
+//   } finally {
+//     loadingSaveApi.value = false
+//   }
+// }
 
 /**
  * 更新save Bot Enabled相關資料。
  */
 
-async function saveBotEnabled() {
-  loadingSaveBotEnabled.value = true
-  try {
-    await updateFundingsBotEnabled(Boolean(form.botEnabled))
-    notifySuccess('儲存完成', `機器人已${form.botEnabled ? '啟用' : '停用'}。`)
-    await loadBotRuntime(false)
-  } catch (error) {
-    notifyError('更新啟用狀態失敗', error)
-  } finally {
-    loadingSaveBotEnabled.value = false
-  }
-}
+// async function saveBotEnabled() {
+//   loadingSaveBotEnabled.value = true
+//   try {
+//     await updateFundingsBotEnabled(Boolean(form.botEnabled))
+//     notifySuccess('儲存完成', `機器人已${form.botEnabled ? '啟用' : '停用'}。`)
+//     await loadBotRuntime(false)
+//   } catch (error) {
+//     notifyError('更新啟用狀態失敗', error)
+//   } finally {
+//     loadingSaveBotEnabled.value = false
+//   }
+// }
 
 /**
  * 更新save Reserve Amount相關資料。
  */
 
-async function saveReserveAmount() {
-  if (Number(form.reserveAmount) < 0) {
-    ElNotification({
-      title: '儲存失敗',
-      message: '保留金額不得小於 0。',
-      type: 'error',
-    })
-    return
-  }
+// async function saveReserveAmount() {
+//   if (Number(form.reserveAmount) < 0) {
+//     ElNotification({
+//       title: '儲存失敗',
+//       message: '保留金額不得小於 0。',
+//       type: 'error',
+//     })
+//     return
+//   }
 
-  loadingSaveReserve.value = true
-  try {
-    await updateFundingsReserveAmount(Number(form.reserveAmount || 0))
-    notifySuccess('儲存完成', '保留金額已更新。')
-    await loadBotRuntime(false)
-  } catch (error) {
-    notifyError('儲存保留金額失敗', error)
-  } finally {
-    loadingSaveReserve.value = false
-  }
-}
+//   loadingSaveReserve.value = true
+//   try {
+//     await updateFundingsReserveAmount(Number(form.reserveAmount || 0))
+//     notifySuccess('儲存完成', '保留金額已更新。')
+//     await loadBotRuntime(false)
+//   } catch (error) {
+//     notifyError('儲存保留金額失敗', error)
+//   } finally {
+//     loadingSaveReserve.value = false
+//   }
+// }
 
 /**
  * 更新save Bot Config相關資料。
  */
 
-async function saveBotConfig() {
-  loadingSaveBotConfig.value = true
-  try {
-    await updateFundingsBotConfig({
-      strategyId: form.botConfig.strategyId,
-      strategyMode: form.botConfig.strategyMode,
-      currency: form.botConfig.currency,
-      minAmount: Number(form.botConfig.minAmount || 0),
-      period: Number(form.botConfig.period || 120),
-      minDailyRate: Number(form.botConfig.minDailyRate || 0.000001),
-      autoRelist: Boolean(form.botConfig.autoRelist),
-      tickIntervalSec: Number(form.botConfig.tickIntervalSec || 30),
-    })
-    notifySuccess('儲存完成', 'Bot 策略設定已更新。')
-    await Promise.all([loadSettings(false), loadBotRuntime(false)])
-  } catch (error) {
-    notifyError('儲存 Bot 設定失敗', error)
-  } finally {
-    loadingSaveBotConfig.value = false
-  }
-}
+// async function saveBotConfig() {
+//   loadingSaveBotConfig.value = true
+//   try {
+//     await updateFundingsBotConfig({
+//       strategyId: form.botConfig.strategyId,
+//       strategyMode: form.botConfig.strategyMode,
+//       currency: form.botConfig.currency,
+//       minAmount: Number(form.botConfig.minAmount || 0),
+//       period: Number(form.botConfig.period || 120),
+//       minDailyRate: Number(form.botConfig.minDailyRate || 0.000001),
+//       autoRelist: Boolean(form.botConfig.autoRelist),
+//       tickIntervalSec: Number(form.botConfig.tickIntervalSec || 30),
+//     })
+//     notifySuccess('儲存完成', 'Bot 策略設定已更新。')
+//     await Promise.all([loadSettings(false), loadBotRuntime(false)])
+//   } catch (error) {
+//     notifyError('儲存 Bot 設定失敗', error)
+//   } finally {
+//     loadingSaveBotConfig.value = false
+//   }
+// }
 
 /**
  * 處理run Manual Tick邏輯。
  */
 
-async function runManualTick() {
-  loadingManualTick.value = true
-  try {
-    await runFundingsBotManualTick()
-    notifySuccess('執行完成', '已手動觸發一次 bot。')
-    await loadBotRuntime(false)
-  } catch (error) {
-    notifyError('手動執行失敗', error)
-  } finally {
-    loadingManualTick.value = false
-  }
-}
+// async function runManualTick() {
+//   loadingManualTick.value = true
+//   try {
+//     await runFundingsBotManualTick()
+//     notifySuccess('執行完成', '已手動觸發一次 bot。')
+//     await loadBotRuntime(false)
+//   } catch (error) {
+//     notifyError('手動執行失敗', error)
+//   } finally {
+//     loadingManualTick.value = false
+//   }
+// }
 
-onMounted(async () => {
-  await Promise.all([loadSettings(false), loadBotRuntime(false)])
-})
+// onMounted(async () => {
+//   await Promise.all([loadSettings(false), loadBotRuntime(false)])
+// })
 </script>
 
 <template>
@@ -480,19 +454,17 @@ onMounted(async () => {
 
     <el-card shadow="never">
       <template #header>Bitfinex API 憑證</template>
-      <el-form :model="form" label-position="top">
+      <el-form :model="settingsData" label-position="top">
         <el-form-item label="API Key">
           <el-input
-            v-model="form.apiKey"
+            v-model="settingsData.apiKey"
             placeholder="輸入 Bitfinex API Key"
             @input="sanitizeSettingField('apiKey')"
           />
         </el-form-item>
         <el-form-item label="API Secret">
           <el-input
-            v-model="form.apiSecret"
-            type="password"
-            show-password
+            v-model="settingsData.apiSecret"
             placeholder="輸入 Bitfinex API Secret"
             @input="sanitizeSettingField('apiSecret')"
           />
@@ -505,22 +477,22 @@ onMounted(async () => {
 
     <el-card shadow="never">
       <template #header>機器人啟用與資金保留</template>
-      <el-form :model="form" label-position="top">
+      <el-form :model="settingsData" label-position="top">
         <el-form-item label="啟用自動放貸機器人">
           <div class="inline-row">
             <el-switch
-              v-model="form.botEnabled"
+              v-model="settingsData.botEnabled"
               :loading="loadingSaveBotEnabled"
               @change="saveBotEnabled"
             />
-            <span>{{ form.botEnabled ? '目前為啟用' : '目前為關閉' }}</span>
+            <span>{{ settingsData.botEnabled ? '目前為啟用' : '目前為關閉' }}</span>
           </div>
         </el-form-item>
 
         <el-form-item label="保留金額">
           <div class="inline-row">
             <el-input-number
-              v-model="form.reserveAmount"
+              v-model="settingsData.reserveAmount"
               :min="0"
               :step="1"
               :precision="8"
@@ -537,11 +509,11 @@ onMounted(async () => {
 
     <el-card shadow="never">
       <template #header>Bot 策略設定</template>
-      <el-form :model="form.botConfig" label-position="top">
+      <el-form :model="settingsData.botConfig" label-position="top">
         <el-row :gutter="16">
           <el-col :xs="24" :md="8">
             <el-form-item label="策略模式">
-              <el-select v-model="form.botConfig.strategyMode">
+              <el-select v-model="settingsData.botConfig.strategyMode">
                 <el-option
                   v-for="item in strategyModeOptions"
                   :key="item.value"
@@ -555,13 +527,13 @@ onMounted(async () => {
 
           <el-col :xs="24" :md="8">
             <el-form-item label="策略 ID">
-              <el-input v-model="form.botConfig.strategyId" />
+              <el-input v-model="settingsData.botConfig.strategyId" />
             </el-form-item>
           </el-col>
 
           <el-col :xs="24" :md="8">
             <el-form-item label="顯示幣種">
-              <el-select v-model="form.botConfig.currency">
+              <el-select v-model="settingsData.botConfig.currency">
                 <el-option
                   v-for="currency in currencyOptions"
                   :key="currency"
@@ -575,7 +547,7 @@ onMounted(async () => {
           <el-col :xs="24" :md="8">
             <el-form-item label="放貸天數（由策略動態決定）">
               <el-input-number
-                v-model="form.botConfig.period"
+                v-model="settingsData.botConfig.period"
                 :min="2"
                 :max="120"
                 :step="1"
@@ -587,7 +559,7 @@ onMounted(async () => {
           <el-col :xs="24" :md="8">
             <el-form-item label="最小放貸金額（Bitfinex 最低 150）">
               <el-input-number
-                v-model="form.botConfig.minAmount"
+                v-model="settingsData.botConfig.minAmount"
                 :min="150"
                 :step="1"
                 :precision="8"
@@ -599,7 +571,7 @@ onMounted(async () => {
           <el-col :xs="24" :md="8">
             <el-form-item label="最低日利率（由策略動態決定）">
               <el-input-number
-                v-model="form.botConfig.minDailyRate"
+                v-model="settingsData.botConfig.minDailyRate"
                 :min="0.000001"
                 :step="0.000001"
                 :precision="8"
@@ -611,7 +583,7 @@ onMounted(async () => {
           <el-col :xs="24" :md="8">
             <el-form-item label="輪詢秒數">
               <el-input-number
-                v-model="form.botConfig.tickIntervalSec"
+                v-model="settingsData.botConfig.tickIntervalSec"
                 :min="5"
                 :max="3600"
                 :step="5"
@@ -621,7 +593,7 @@ onMounted(async () => {
 
           <el-col :xs="24" :md="8">
             <el-form-item label="自動重新掛單">
-              <el-switch v-model="form.botConfig.autoRelist" />
+              <el-switch v-model="settingsData.botConfig.autoRelist" />
             </el-form-item>
           </el-col>
         </el-row>

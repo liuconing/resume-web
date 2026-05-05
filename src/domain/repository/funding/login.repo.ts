@@ -15,7 +15,7 @@ export interface LoginRes {
   }
 }
 
-export const loginRepo = async (req: LoginReq): Promise<PpsApiReturn<LoginRes>> => {
-  const res = await axiosBase.post('/fundings/auth/login', req)
-  return res.data
+export const loginRepo = async (req: LoginReq): Promise<LoginRes> => {
+  const res = await axiosBase.post<PpsApiReturn<LoginRes>>('/fundings/auth/login', req)
+  return res.data.data
 }

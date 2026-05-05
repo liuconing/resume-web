@@ -1,60 +1,56 @@
 <script setup lang="ts">
-import { onMounted, watch, reactive, ref } from 'vue'
+import { computed } from 'vue'
 import { useFetch } from '@/hooks'
-import { BigNumber } from '@/lib/bigNumber'
+import { formatAmount } from '@/utils'
 import { getFundingsOverviewUsecase } from '@/domain/usecase'
 
-const { data: overviewData } = useFetch(getFundingsOverviewUsecase, undefined)
-const loading = ref(false)
-const overview = reactive({
-  totalAssets: 0,
-  assets: [] as { currency: string; amount: number }[],
-  idleFunds: 0,
-  interestIncome: 0,
-})
+const {
+  data: overviewData,
+  refetch: refetchOverviewData,
+  isLoading: isLoadingOverviewData,
+  isFetching: isFetchingOverviewData,
+} = useFetch(getFundingsOverviewUsecase, undefined)
 
-const formatAmount = (value: number) => {
-  return BigNumber(value || 0).toFormat(2, BigNumber.ROUND_HALF_UP)
+const handleReload = async () => {
+  await refetchOverviewData()
 }
 
-watch(overviewData, (newData) => {
-  console.log(newData)
-})
-
-const handleReload = async () => {}
+const isLoading = computed(() => isLoadingOverviewData.value || isFetchingOverviewData.value)
 </script>
 
 <template>
   <div class="page">
+    <div class="ml-auto">
+      更新時間: {{ new Date(overviewData?.updatedAt || '').toLocaleString() }}
+    </div>
     <div class="toolbar">
       <h2>資金總覽</h2>
-      <el-button type="primary" :loading="loading" @click="handleReload">重新整理</el-button>
+      <el-button type="primary" :loading="isLoading" @click="handleReload">重新整理</el-button>
     </div>
 
-    <el-row :gutter="16">
+    <el-row :gutter="16" v-loading="isLoading">
       <el-col :xs="24" :md="8">
         <el-card shadow="hover">
           <template #header>總資產</template>
-          <div class="value">{{ formatAmount(overview.totalAssets) }}</div>
+          <div class="value">{{ formatAmount(overviewData?.totalAssets || 0) }}</div>
         </el-card>
       </el-col>
       <el-col :xs="24" :md="8">
         <el-card shadow="hover">
           <template #header>閒置資金</template>
-          <div class="value">{{ formatAmount(overview.idleFunds) }}</div>
+          <div class="value">{{ formatAmount(overviewData?.idleFunds || 0) }}</div>
         </el-card>
       </el-col>
       <el-col :xs="24" :md="8">
         <el-card shadow="hover">
           <template #header>利息收入</template>
-          <div class="value">{{ formatAmount(overview.interestIncome) }}</div>
+          <div class="value">{{ formatAmount(overviewData?.interestIncome || 0) }}</div>
         </el-card>
       </el-col>
     </el-row>
-
     <el-card shadow="never" class="table-card">
       <template #header>幣種資產明細</template>
-      <el-table :data="overview.assets" stripe v-loading="loading">
+      <el-table :data="overviewData?.assets || []" stripe v-loading="isLoading">
         <el-table-column prop="currency" label="幣種" width="140" />
         <el-table-column label="金額">
           <template #default="{ row }">{{ formatAmount(row.amount) }}</template>

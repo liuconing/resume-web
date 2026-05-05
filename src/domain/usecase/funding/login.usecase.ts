@@ -3,12 +3,11 @@ import { loginRepo, type LoginReq, setLocalStorageRepo } from '@/domain/reposito
 export interface LoginUsecaseDto extends LoginReq {}
 
 export async function loginUsecase(req: LoginUsecaseDto): Promise<boolean> {
-  const res = await loginRepo(req)
-  if (res.ok) {
-    const { token } = res.data
-    setLocalStorageRepo(token)
+  try {
+    const data = await loginRepo(req)
+    setLocalStorageRepo(data.token)
     return true
-  } else {
+  } catch {
     return false
   }
 }

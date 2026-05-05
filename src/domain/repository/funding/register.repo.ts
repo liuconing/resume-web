@@ -1,4 +1,4 @@
-import { axiosBase } from '@/lib/axios'
+import { axiosBase, type PpsApiReturn } from '@/lib/axios'
 
 export interface RegisterReq {
   email: string
@@ -7,6 +7,5 @@ export interface RegisterReq {
 }
 
 export const registerRepo = async (req: RegisterReq): Promise<void> => {
-  const res = await axiosBase.post('/fundings/auth/register', req)
-  return res.data
+  await axiosBase.post<PpsApiReturn<unknown>>('/fundings/auth/register', req)
 }

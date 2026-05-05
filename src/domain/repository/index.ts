@@ -1,3 +1,6 @@
 export * from './airQualityIndex.repo'
+export * from './admin'
+export * from './borrower'
 export * from './funding'
+export * from './main'
 export * from './local.repo'

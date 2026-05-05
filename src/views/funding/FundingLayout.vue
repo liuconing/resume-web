@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterView, useRoute, useRouter } from 'vue-router'
-import { ElNotification } from 'element-plus'
+import { ElNotification } from '@/lib/element-plus'
 import { removeLocalStorageUsecase } from '@/domain/usecase'
 import { useMutation } from '@/hooks/useMutation'
 const route = useRoute()
