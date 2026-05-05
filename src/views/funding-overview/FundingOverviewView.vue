@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { loginUsecase, registerUsecase, type LoginUsecaseDto } from '@/domain/usecase'
+import { loginUsecase, registerUsecase, type LoginParamsDto } from '@/domain/usecase'
 import type { RegisterParamsDto } from '@/domain/usecase'
 import { Button } from '@/components'
 import { useFundingDialogs, useMutation } from '@/hooks'
@@ -40,7 +40,7 @@ const featureCards: {
 ]
 
 /** 處理登入邏輯。 */
-const handleLogin = async (data: LoginUsecaseDto) => {
+const handleLogin = async (data: LoginParamsDto) => {
   await loginMutation(data)
   await router.push('/funding')
 }

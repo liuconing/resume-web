@@ -2,10 +2,10 @@
 import { ref, computed, nextTick } from 'vue'
 import { useFetch } from '@/hooks'
 import { getAirQualityIndexUsecase } from '@/domain/usecase'
-import type { AirQualityIndex } from '@/domain/repository'
+import type { AirQualityIndexDto } from '@/domain/usecase'
 
 type AqiStyle = { bg: string; status: string }
-type AirQualityAreaRow = AirQualityIndex & { aqiStyle: AqiStyle }
+type AirQualityAreaRow = AirQualityIndexDto & { aqiStyle: AqiStyle }
 
 const targetElement = ref<HTMLElement | null>(null)
 const selectCounty = ref<string>('')

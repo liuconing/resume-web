@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { type LoginUsecaseDto } from '@/domain/usecase'
+import { type LoginParamsDto } from '@/domain/usecase'
 import { Button, Dialog, DialogPasswordToggle, TextInput } from '@/components'
 import { useFundingDialogs } from '@/hooks'
 
 const props = defineProps<{
-  onSubmit: (data: LoginUsecaseDto) => Promise<void>
+  onSubmit: (data: LoginParamsDto) => Promise<void>
 }>()
 
 const { dialogModel, closeDialogIf } = useFundingDialogs('login')
@@ -36,11 +36,7 @@ const submitLogin = async () => {
     <form class="flex flex-col gap-4.5" @submit.prevent="submitLogin">
       <label class="flex flex-col gap-1.5">
         <span class="text-[0.8125rem] font-semibold text-slate-600">Email</span>
-        <TextInput
-          v-model.trim="loginForm.email"
-          type="email"
-          autocomplete="email"
-        />
+        <TextInput v-model.trim="loginForm.email" type="email" autocomplete="email" />
       </label>
       <label class="flex flex-col gap-1.5">
         <span class="text-[0.8125rem] font-semibold text-slate-600">密碼</span>
