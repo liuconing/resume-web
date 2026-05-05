@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { loginUsecase, registerUsecase, type LoginUsecaseDto } from '@/domain/usecase'
-import type { RegisterReq } from '@/domain/repository'
+import type { RegisterParamsDto } from '@/domain/usecase'
 import { Button } from '@/components'
 import { useFundingDialogs, useMutation } from '@/hooks'
 import {
@@ -46,7 +46,7 @@ const handleLogin = async (data: LoginUsecaseDto) => {
 }
 
 /** 處理註冊邏輯。 */
-const handleRegister = async (data: RegisterReq) => {
+const handleRegister = async (data: RegisterParamsDto) => {
   await registerMutation(data)
 }
 </script>

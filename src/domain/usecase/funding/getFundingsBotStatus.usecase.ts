@@ -1,10 +1,11 @@
-import { getFundingsBotStatusRepo } from '@/domain/repository'
+import { getFundingsBotStatus } from '@/domain/repository'
+import type { GetFundingsBotStatusRes } from '@/domain/repository'
+
+export interface GetFundingsBotStatusDto extends GetFundingsBotStatusRes {}
 
 /**
- * 取得放貸 bot 狀態。
- * @returns 放貸 bot 狀態。
+ * 取得放貸 bot 目前執行狀態
  */
-export async function getFundingsBotStatusUsecase() {
-  const data = await getFundingsBotStatusRepo()
-  return data
+export async function getFundingsBotStatusUsecase(): Promise<GetFundingsBotStatusDto> {
+  return getFundingsBotStatus()
 }

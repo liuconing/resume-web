@@ -1,5 +1,11 @@
-import { getPublicConfigRepo } from '@/domain/repository'
+import { getPublicConfig } from '@/domain/repository'
+import type { GetPublicConfigRes } from '@/domain/repository'
 
-export async function getPublicConfigUsecase() {
-  return getPublicConfigRepo()
+export interface GetPublicConfigDto extends GetPublicConfigRes {}
+
+/**
+ * 取得後端公開設定資料
+ */
+export async function getPublicConfigUsecase(): Promise<GetPublicConfigDto> {
+  return getPublicConfig()
 }

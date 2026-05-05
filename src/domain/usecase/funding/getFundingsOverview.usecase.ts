@@ -1,8 +1,11 @@
-import { getFundingsOverviewRepo, type GetFundingsOverviewRes } from '@/domain/repository'
+import { getFundingsOverview } from '@/domain/repository'
+import type { GetFundingsOverviewRes } from '@/domain/repository'
 
-export interface GetFundingsOverviewUsecaseDto extends GetFundingsOverviewRes {}
+export interface GetFundingsOverviewDto extends GetFundingsOverviewRes {}
 
-export async function getFundingsOverviewUsecase(): Promise<GetFundingsOverviewUsecaseDto> {
-  const data = await getFundingsOverviewRepo()
-  return data
+/**
+ * 取得放貸總覽資料
+ */
+export async function getFundingsOverviewUsecase(): Promise<GetFundingsOverviewDto> {
+  return getFundingsOverview()
 }

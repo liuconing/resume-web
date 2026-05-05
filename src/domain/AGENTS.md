@@ -215,7 +215,7 @@ export async function addWallet(
 - Function 上方需加 JSDoc 說明用途。
 - interface 每個欄位需加 JSDoc 或行內註解說明用途。
 - 如果 UI 沒有特殊需求，直接回傳 repository 取回的資料即可，不需額外轉換。
-- **Dto interface**：若 Dto 與 Res 欄位完全一致，可使用 `export type { XxxRes as XxxDto }` 代替空的 extend；若有欄位增減或格式轉換，才建立獨立的 Dto interface。
+- **Dto interface**：若 Dto 與 Res 欄位完全一致，一樣建立 `interface XxxDto extends XxxRes{}` 目的是讓 View 層依賴 usecase 介面而非 repository，保持層級解耦，方便未來獨立修改入參。
 - **ParamsDto interface**：即使內容與 Params 相同，仍保留 ParamsDto，目的是讓 View 層依賴 usecase 介面而非 repository，保持層級解耦，方便未來獨立修改入參。
 
 
@@ -229,7 +229,7 @@ export async function addWallet(
 // getEnvConfig.usecase.ts
 
 
-import { getEnvConfig as getEnvConfigRepo } from '../repository'
+import { getEnvConfig } from '../repository'
 import type { GetEnvConfigRes } from '../repository'
 
 
@@ -238,7 +238,7 @@ export interface GetEnvConfigDto extends GetEnvConfigRes {}
 
 /** 取得環境設定，並確保 featureFlags 為排序後的陣列 */
 export async function getEnvConfigUsecase(): Promise<GetEnvConfigDto> {
-  const data = await getEnvConfigRepo()
+  const data = await getEnvConfig()
   return {
     ...data,
     featureFlags: [...data.featureFlags].sort(),
@@ -254,7 +254,7 @@ export async function getEnvConfigUsecase(): Promise<GetEnvConfigDto> {
 // getWalletDetail.usecase.ts
 
 
-import { getWalletDetail as getWalletDetailRepo } from '../repository'
+import { getWalletDetail } from '../repository'
 import type {
   GetWalletDetailParams,
   GetWalletDetailRes,
@@ -272,7 +272,7 @@ export interface GetWalletDetailParamsDto extends GetWalletDetailParams {}
 export async function getWalletDetailUsecase(
   params: GetWalletDetailParamsDto
 ): Promise<GetWalletDetailDto> {
-  return getWalletDetailRepo(params)
+  return getWalletDetail(params)
 }
 ```
 
@@ -284,7 +284,7 @@ export async function getWalletDetailUsecase(
 // addWallet.usecase.ts
 
 
-import { addWallet as addWalletRepo } from '../repository'
+import { addWallet  } from '../repository'
 import type { AddWalletParams, AddWalletRes } from '../repository'
 
 
@@ -299,7 +299,7 @@ export interface AddWalletParamsDto extends AddWalletParams {}
 export async function addWalletUsecase(
   params: AddWalletParamsDto
 ): Promise<AddWalletDto> {
-  return addWalletRepo(params)
+  return addWallet(params)
 }
 ```
 

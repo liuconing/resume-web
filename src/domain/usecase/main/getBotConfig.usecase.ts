@@ -1,5 +1,11 @@
-import { getBotConfigRepo } from '@/domain/repository'
+import { getBotConfig } from '@/domain/repository'
+import type { GetBotConfigRes } from '@/domain/repository'
 
-export async function getBotConfigUsecase() {
-  return getBotConfigRepo()
+export interface GetBotConfigDto extends GetBotConfigRes {}
+
+/**
+ * 取得 bot 執行設定
+ */
+export async function getBotConfigUsecase(): Promise<GetBotConfigDto> {
+  return getBotConfig()
 }

@@ -1,42 +1,47 @@
 import { axiosBase, type PpsApiReturn } from '@/lib/axios'
 
+/** 放貸 bot 策略與執行設定 */
 export interface FundingsBotConfig {
-  // bot 策略 ID。
+  /** bot 策略 ID */
   strategyId: string
-  // 策略模式（最佳成交 / 高利率等待）。
+  /** 策略模式（最佳成交 / 高利率等待） */
   strategyMode: string
-  // bot 操作幣種。
+  /** bot 操作幣種 */
   currency: string
-  // 單次最小放貸金額。
+  /** 單次最小放貸金額 */
   minAmount: number
-  // 放貸天期。
+  /** 放貸天期 */
   period: number
-  // 最低每日利率。
+  /** 最低每日利率 */
   minDailyRate: number
-  // 是否自動重新掛單。
+  /** 是否自動重新掛單 */
   autoRelist: boolean
-  // bot tick 間隔秒數。
+  /** bot tick 間隔秒數 */
   tickIntervalSec: number
 }
 
+/** 取得放貸 bot 設定 API 回傳格式 */
 export interface GetFundingsSettingsRes {
-  // 目前使用者的 Bitfinex API key。
+  /** 目前使用者的 Bitfinex API key */
   apiKey: string
-  // 目前使用者的 Bitfinex API secret。
+  /** 目前使用者的 Bitfinex API secret */
   apiSecret: string
-  // 是否同時具備 API key 與 API secret。
+  /** 是否同時具備 API key 與 API secret */
   hasCredentials: boolean
-  // 使用者放貸 bot 是否啟用。
+  /** 使用者放貸 bot 是否啟用 */
   botEnabled: boolean
-  // 保留不投入自動放貸的資金金額。
+  /** 保留不投入自動放貸的資金金額 */
   reserveAmount: number
-  // 使用者目前的 bot 策略與執行設定。
+  /** 使用者目前的 bot 策略與執行設定 */
   botConfig: FundingsBotConfig
-  // 設定最後更新時間。
+  /** 設定最後更新時間 */
   updatedAt: string | null
 }
 
-export const getFundingsSettingsRepo = async (): Promise<GetFundingsSettingsRes> => {
+/**
+ * 取得放貸 bot 設定
+ */
+export async function getFundingsSettings(): Promise<GetFundingsSettingsRes> {
   const res = await axiosBase.get<PpsApiReturn<GetFundingsSettingsRes>>('/fundings/settings')
   return res.data.data
 }

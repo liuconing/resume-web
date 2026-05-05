@@ -1,5 +1,11 @@
-import { getWalletsRepo } from '@/domain/repository'
+import { getWallets } from '@/domain/repository'
+import type { GetWalletsRes } from '@/domain/repository'
 
-export async function getWalletsUsecase() {
-  return getWalletsRepo()
+export interface GetWalletsDto extends GetWalletsRes {}
+
+/**
+ * 取得所有錢包資料
+ */
+export async function getWalletsUsecase(): Promise<GetWalletsDto> {
+  return getWallets()
 }

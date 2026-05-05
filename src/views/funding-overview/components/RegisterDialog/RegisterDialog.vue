@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import type { RegisterReq } from '@/domain/repository'
+import type { RegisterParamsDto } from '@/domain/usecase'
 import { Button, Dialog, DialogPasswordToggle, TextInput } from '@/components'
 import { useFundingDialogs } from '@/hooks'
 
 const { dialogModel, closeDialogIf } = useFundingDialogs('register')
 
 const props = defineProps<{
-  onSubmit: (data: RegisterReq) => Promise<void>
+  onSubmit: (data: RegisterParamsDto) => Promise<void>
 }>()
 
 const showRegisterPassword = ref(false)

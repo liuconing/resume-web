@@ -1,11 +1,16 @@
-import { loginRepo, type LoginReq, setLocalStorageRepo } from '@/domain/repository'
+import { login as loginRepo, setLocalStorage } from '@/domain/repository'
+import type { LoginParams } from '@/domain/repository'
 
-export interface LoginUsecaseDto extends LoginReq {}
+export interface LoginParamsDto extends LoginParams {}
 
-export async function loginUsecase(req: LoginUsecaseDto): Promise<boolean> {
+/**
+ * 使用者登入，成功後儲存 token 至 localStorage
+ * @param params - 傳入參數，包含 email 與密碼
+ */
+export async function loginUsecase(params: LoginParamsDto): Promise<boolean> {
   try {
-    const data = await loginRepo(req)
-    setLocalStorageRepo(data.token)
+    const data = await loginRepo(params)
+    setLocalStorage(data.token)
     return true
   } catch {
     return false

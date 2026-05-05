@@ -1,10 +1,11 @@
-import { getFundingsSettingsRepo } from '@/domain/repository'
+import { getFundingsSettings } from '@/domain/repository'
+import type { GetFundingsSettingsRes } from '@/domain/repository'
+
+export interface GetFundingsSettingsDto extends GetFundingsSettingsRes {}
 
 /**
- * 取得放貸 bot 設定。
- * @returns 放貸 bot 設定。
+ * 取得放貸 bot 設定
  */
-export async function getFundingsSettingsUsecase() {
-  const data = await getFundingsSettingsRepo()
-  return data
+export async function getFundingsSettingsUsecase(): Promise<GetFundingsSettingsDto> {
+  return getFundingsSettings()
 }
