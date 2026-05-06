@@ -18,7 +18,12 @@ export interface UpdateFundingsBotEnabledRes {
  * 更新放貸 bot 啟用狀態
  * @param params - 傳入參數，包含是否啟用
  */
-export async function updateFundingsBotEnabled(params: UpdateFundingsBotEnabledParams): Promise<UpdateFundingsBotEnabledRes> {
-  const res = await axiosBase.put<PpsApiReturn<UpdateFundingsBotEnabledRes>>('/fundings/settings/bot-enabled', params)
+export async function updateFundingsBotEnabled(
+  params: UpdateFundingsBotEnabledParams,
+): Promise<UpdateFundingsBotEnabledRes> {
+  const res = await axiosBase.put<PpsApiReturn<UpdateFundingsBotEnabledRes>>(
+    '/fundings/settings/bot-enabled',
+    params,
+  )
   return res.data.data
 }

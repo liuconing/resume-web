@@ -25,3 +25,12 @@ export const formatTime = (value: string | null) => {
   }
   return date.toLocaleString('zh-TW', { hour12: false })
 }
+
+/**
+ * 格式化format Rate內容供顯示或輸出。
+ * @param value - 輸入值。
+ */
+
+export const formatRate = (value: number) => {
+  return `${(Number(value || 0) * 100).toFixed(6)}%`
+}

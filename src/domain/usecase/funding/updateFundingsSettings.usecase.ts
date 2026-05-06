@@ -1,7 +1,6 @@
 import { updateFundingsSettings } from '@/domain/repository'
-import type { UpdateFundingsSettingsParams, UpdateFundingsSettingsRes } from '@/domain/repository'
+import type { UpdateFundingsSettingsParams } from '@/domain/repository'
 
-export interface UpdateFundingsSettingsDto extends UpdateFundingsSettingsRes {}
 export interface UpdateFundingsSettingsParamsDto extends UpdateFundingsSettingsParams {}
 
 /**
@@ -10,6 +9,10 @@ export interface UpdateFundingsSettingsParamsDto extends UpdateFundingsSettingsP
  */
 export async function updateFundingsSettingsUsecase(
   params: UpdateFundingsSettingsParamsDto,
-): Promise<UpdateFundingsSettingsDto> {
-  return updateFundingsSettings(params)
+): Promise<boolean> {
+  const res = await updateFundingsSettings(params)
+  if (res.ok) {
+    return true
+  }
+  return false
 }

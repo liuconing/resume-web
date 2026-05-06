@@ -11,5 +11,6 @@ export interface GetFundingsBotLogsParamsDto extends GetFundingsBotLogsParams {}
 export async function getFundingsBotLogsUsecase(
   params?: GetFundingsBotLogsParamsDto,
 ): Promise<GetFundingsBotLogsDto> {
-  return getFundingsBotLogs(params as GetFundingsBotLogsParams)
+  const data = await getFundingsBotLogs(params)
+  return data
 }
