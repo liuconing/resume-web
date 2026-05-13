@@ -17,6 +17,10 @@ alwaysApply: true
   - 適用於 `*.ts`、`*.tsx`、`*.js`、`*.jsx`、`*.vue`。
   - 定義 TS / JS 函式、JSDoc、參數型別、事件命名、Vue 響應式命名、集合命名。
 
+- [rules/code-style/ui-logic-organization.md](code-style/ui-logic-organization.md)
+  - 適用於 `src/**/*.ts`、`src/**/*.tsx`、`src/**/*.js`、`src/**/*.jsx`、`src/**/*.vue`。
+  - 新增或調整 UI 顯示邏輯函式、互動流程函式、輸出內容邏輯函式前，優先檢查並使用 `src/hooks/**` 與 `src/utils/**` 既有功能。
+
 - [rules/domain/domain-agents.md](domain/domain-agents.md)
   - 適用於 `domain/**`。
   - 只有任務涉及 domain 資料夾內容時才讀取。

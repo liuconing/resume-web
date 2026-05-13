@@ -1,15 +1,27 @@
 # AGENTS.md
 
 ## 目標
-請以最少的 token 成本處理這個 Vue 3 前端專案。
-優先採用小範圍閱讀、小幅修改、簡潔回覆。
-除非任務明確要求，否則不要掃描整個 repo、不要大重構、不要輸出長篇說明。
+- 以最少必要閱讀與最小可行修改完成任務。
+- 優先維持既有架構、封裝與命名語意，不做無關重構。
+- 回覆精簡，只提供完成任務所需資訊。
+
+## 規則優先順序
+- 優先順序：使用者明確指令 > 檔案或資料夾局部規則 > `.cursor/rules/**` > 本檔通用原則。
+- 修改 `*.ts`、`*.tsx`、`*.js`、`*.jsx`、`*.vue` 時，程式風格以 [`.cursor/rules/code-style/ts-js-code-style.md`](.cursor/rules/code-style/ts-js-code-style.md) 為準。
+- 新增或調整 UI 顯示邏輯、互動流程或輸出內容時，套用 [`.cursor/rules/code-style/ui-logic-organization.md`](.cursor/rules/code-style/ui-logic-organization.md)。
+- 任務涉及 `src/domain/**` 時，套用 [`.cursor/rules/domain/domain-agents.md`](.cursor/rules/domain/domain-agents.md)。
+- 若本檔與上述規則衝突，以更接近被修改檔案的規則為準。
+
+## `.cursor/rules` 對照
+- `code-style/ts-js-code-style.md`：TS / JS / Vue 函式宣告、JSDoc、物件參數、事件命名、`ref` / `reactive` 後綴、集合命名。
+- `code-style/ui-logic-organization.md`：格式化、顯示文字、時間、金額、百分比、dialog、fetch、mutation、navigator 等 UI 邏輯放置規則。
+- `domain/domain-agents.md`：repository / usecase 分層、命名、DTO / Params、index re-export 與 domain 邊界。
 
 ## 專案技術棧
 - Vue 3
 - Pinia
 - Vue Router
-- 若有 TypeScript，沿用現有型別風格
+- TypeScript
 - 若有 Vite，沿用既有專案設定與腳本
 
 ## 閱讀範圍規則
@@ -34,17 +46,19 @@
   - 鎖檔
   - 圖片與產生檔
 - 若任務只是 UI 小修、bug fix 或單一路由問題，不要展開全域搜尋。
+- 依任務條件讀取規則：改程式碼讀 `ts-js-code-style.md`；改 UI 邏輯讀 `ui-logic-organization.md`；改 `src/domain/**` 讀 `domain-agents.md`。
 
 ## 修改原則
 - 先找最小可行修改，不要先做抽象化。
 - 優先重用既有元件、既有 store、既有 composable。
 - 只改與需求直接相關的檔案。
-- 不要因為順手就重排整份檔案、改命名、改 formatter 結果。
+- 不要為與需求無關的理由重排整份檔案或調整 formatter。
+- 修改到 TS / JS / Vue 程式時，需符合 `ts-js-code-style.md`；若既有命名與規則衝突，僅調整本次觸及範圍並檢查所有引用點。
 - 不要新增依賴，除非真的必要且有明確理由。
 - 不要把局部問題升級成全專案重構。
 
 ## Vue 元件規則
-- 優先維持現有寫法；若專案已使用 `<script setup>`，新改動也沿用該風格。
+- 若專案已使用 `<script setup lang="ts">`，新改動也沿用該風格。
 - 單一元件只處理單一職責；不要把過多商業邏輯塞進畫面元件。
 - UI 修正時，先檢查：
   1. 當前元件
@@ -53,6 +67,12 @@
   4. 綁定的 class / style
 - 除非需求要求，否則不要改動無關的 template 結構。
 
+## UI 邏輯規則
+- 新增格式化、轉換、顯示文字、金額、百分比、時間等純函式前，先查 `src/utils/**` 是否已有可用函式。
+- 新增 dialog、fetch、mutation、navigator、錯誤處理等互動流程前，先查 `src/hooks/**` 是否已有可用 composable。
+- 單一檔案專用且不具共用價值的邏輯可保留在檔內。
+- 多檔案出現重複邏輯時，整理到 `src/utils/**` 或 `src/hooks/**`，並更新對應 `index.ts`。
+
 ## Pinia 規則
 - 狀態優先放在最接近需求的層級：先 local state，再考慮 Pinia。
 - 不要把一次性頁面狀態塞進全域 store。
@@ -60,7 +80,7 @@
   - 這是不是跨頁共享狀態？
   - 是否已有對應 store 可重用？
   - 是否其實只需 computed / props / composable？
-- 優先沿用現有 store 命名、action 風格、state 結構。
+- 優先沿用現有 store 命名、action 風格、state 結構；若與 code-style 規則衝突，以 code-style 規則為準並維持語意一致。
 - 不要為了小需求新增大型 store。
 
 ## Vue Router 規則
@@ -75,6 +95,7 @@
 ## API / 非同步規則
 - 沿用現有請求封裝方式，不要混入新風格。
 - 除非必要，不要把 API 邏輯寫進元件內。
+- 涉及 `src/domain/**` 的 API / usecase / repository 修改時，先套用 `domain-agents.md`。
 - 非同步錯誤處理只補任務需要的最小範圍。
 - 不要輸出整段 response / error log，只保留關鍵錯誤訊息。
 
@@ -104,4 +125,5 @@
 - 需求已在最小修改下完成。
 - 未改動無關檔案。
 - 未新增不必要依賴。
+- 涉及的程式碼或規則文件已符合對應 `.cursor/rules/**`。
 - 回覆保持簡潔，可直接進入下一步。

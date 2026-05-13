@@ -13,14 +13,14 @@ alwaysApply: false
 - 只有任務會讀取、修改、建立、刪除 `domain/**` 內容時，才讀取本規則。
 - 任務未涉及 `domain/**` 時，略過本規則。
 - 不因為專案存在 `domain` 資料夾就自動套用本規則。
-- 若新增或修改 domain 內的 TS / JS 程式碼，同時套用 `.rules/ts-js-code-style.md`。
+- 若新增或修改 domain 內的 TS / JS 程式碼，同時套用 `.cursor/rules/code-style/ts-js-code-style.md`。
 
 ## 規則位置
 
-- domain 專用 AI Agent 規則統一放在 `.rules/domain-agents.md`。
+- domain 專用 AI Agent 規則統一放在 `.cursor/rules/code-style/domain-agents.md`。
 - 不再把 domain 專用規則維護在 `domain/AGENTS.md`。
 - 若既有專案仍存在 `domain/AGENTS.md`，僅作為遷移來源。
-- 修改 `domain/**` 前，優先讀取 `.rules/domain-agents.md`。
+- 修改 `domain/**` 前，優先讀取 `.cursor/rules/code-style/domain-agents.md`。
 
 ## 目標
 
