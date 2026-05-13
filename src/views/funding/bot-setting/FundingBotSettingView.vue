@@ -245,7 +245,6 @@ const handelReFetchData = async () => {
  * 更新save Bot Enabled相關資料。
  */
 async function handelSwitchBotEnabled(enabled: boolean) {
-  console.log('handelSwitchBotEnabled', enabled)
   try {
     await updateFundingsBotEnabled({ enabled })
     await refetchFundingsBotSettings()

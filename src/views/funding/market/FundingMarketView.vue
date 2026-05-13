@@ -1,74 +1,77 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
-import { useFetch } from '@/hooks'
+import { computed, ref, watch } from 'vue'
+import { useQuery } from '@/lib/vue-query'
 import { ElNotification } from '@/lib/element-plus'
-import {
-  getFundingsBotDiagnosticUsecase,
-  getFundingsBotSimulationDiagnosticUsecase,
-  getFundingsMarketUsecase,
-} from '@/domain/usecase'
+import { getFundingsMarketUsecase } from '@/domain/usecase'
 
-const loadingMarket = ref(false)
-const loadingDiagnostic = ref(false)
-const loadingSimulationDiagnostic = ref(false)
-const selectedCurrency = ref('TESTUSDT')
+const MARKET_LEN = 25
+
+const selectedCurrencyRef = ref('TESTUSDT')
 const currencyOptions = ['TESTUSDT', 'TESTUSD', 'USDT', 'USD']
-const borrowRowsRef = ref<
-  {
-    rateDaily: number
-    rateAprPct: number
-    period: number
-    count: number
-    amount: number
-  }[]
->([])
-const tradeRowsRef = ref([])
-const diagnosticDialogVisible = ref(false)
-const diagnostic = ref(null)
-const diagnosticMode = ref('LIVE')
-const marketReactive = reactive({
-  annualizedPct: 0,
-  bestRateDaily: 0,
-  borrowDemands: [],
-  currency: '',
-  demandAmount: 0,
-  len: 0,
-  symbol: '',
-  usedFallback: false,
+
+const diagnosticDialogVisibleRef = ref(false)
+/** 預留：接上診斷 usecase 後改為明確 DTO 型別 */
+const diagnosticRef = ref<any>(null)
+const diagnosticModeRef = ref('LIVE')
+
+const diagnosticUnavailableHint = '診斷 API／usecase 尚未接上，無法使用'
+
+const marketQuery = useQuery({
+  queryKey: computed(() => ['fundingsMarket', selectedCurrencyRef.value, MARKET_LEN]),
+  queryFn: () =>
+    getFundingsMarketUsecase({
+      currency: selectedCurrencyRef.value,
+      len: MARKET_LEN,
+    }),
+  refetchOnWindowFocus: false,
+  retry: false,
 })
 
-const { data: markets } = useFetch(
-  getFundingsMarketUsecase,
-  {
-    currency: 'USD',
-    len: 25,
-  },
-  {
-    onSuccess: (data) => {
-      Object.assign(marketReactive, data)
-      borrowRowsRef.value = data.borrowDemands
-      tradeRowsRef.value = data.trades
-    },
-    queryKey: ['markets', selectedCurrency.value, 25],
-  },
-)
+const { data, isFetching: loadingMarket, refetch } = marketQuery
+
+const marketSummary = computed(() => {
+  const d = data.value
+  if (!d) {
+    return {
+      symbol: '',
+      annualizedPct: 0,
+      bestRateDaily: 0,
+      demandAmount: 0,
+    }
+  }
+  return {
+    symbol: d.symbol,
+    annualizedPct: d.annualizedPct,
+    bestRateDaily: d.bestRateDaily,
+    demandAmount: d.demandAmount,
+  }
+})
+
+const borrowRows = computed(() => data.value?.borrowDemands ?? [])
+
+const tradeRows = computed(() => {
+  const raw = data.value as { trades?: unknown[] } | undefined
+  const trades = raw?.trades
+  return Array.isArray(trades) ? trades : []
+})
 
 /**
- * 取得read Error相關資料。
- * @param error - 錯誤物件。
+ * 從錯誤物件取出可供顯示的訊息字串。
+ *
+ * @param params - `error` 為 API 或執行期錯誤。
+ * @returns 使用者可讀的錯誤說明。
  */
-
-function readError(error: any) {
-  return error?.response?.data?.message || error?.message || '操作失敗'
+const readError = ({ error }: { error: unknown }): string => {
+  const err = error as { response?: { data?: { message?: string } }; message?: string }
+  return err?.response?.data?.message || err?.message || '操作失敗'
 }
 
 /**
- * 處理notify Success邏輯。
- * @param title - 函式輸入參數。
- * @param message - 函式輸入參數。
+ * 顯示成功通知。
+ *
+ * @param params - `title`、`message` 為通知標題與內文。
  */
-
-function notifySuccess(title: string, message: string) {
+const notifySuccess = ({ title, message }: { title: string; message: string }): void => {
   ElNotification({
     title,
     message,
@@ -77,35 +80,54 @@ function notifySuccess(title: string, message: string) {
 }
 
 /**
- * 處理notify Error邏輯。
- * @param title - 函式輸入參數。
- * @param error - 錯誤物件。
+ * 顯示錯誤通知。
+ *
+ * @param params - `title` 為標題，`error` 為錯誤物件。
  */
-
-function notifyError(title: string, error: any) {
+const notifyError = ({ title, error }: { title: string; error: unknown }): void => {
   ElNotification({
     title,
-    message: readError(error),
+    message: readError({ error }),
     type: 'error',
   })
 }
 
 /**
- * 格式化format Pct內容供顯示或輸出。
- * @param value - 輸入值。
- * @param digits - 函式輸入參數。
+ * 市場 query 錯誤時顯示通知。
+ *
+ * @param err - Query 回傳的錯誤，若為空則不動作。
  */
+const handleMarketQueryError = (err: Error | null | undefined): void => {
+  if (!err) {
+    return
+  }
+  notifyError({ title: '讀取市場資料失敗', error: err })
+}
 
-function formatPct(value: number, digits = 2) {
+watch(
+  () => marketQuery.error.value,
+  (err) => {
+    handleMarketQueryError(err)
+  },
+)
+
+/**
+ * 將數值格式化為帶百分比的顯示字串。
+ *
+ * @param params - `value` 為原始數值，`digits` 為小數位數。
+ * @returns 例如 `1.23%`。
+ */
+const formatPct = ({ value, digits = 2 }: { value: number; digits?: number }): string => {
   return `${Number(value || 0).toFixed(digits)}%`
 }
 
 /**
- * 格式化format Amount內容供顯示或輸出。
- * @param value - 輸入值。
+ * 將金額格式化為繁中地區分隔顯示。
+ *
+ * @param params - `value` 為金額，預設依 0 處理。
+ * @returns 地區化數字字串。
  */
-
-function formatAmount(value: number) {
+const formatAmount = ({ value = 0 }: { value?: number }): string => {
   return Number(value || 0).toLocaleString('zh-TW', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 8,
@@ -113,20 +135,22 @@ function formatAmount(value: number) {
 }
 
 /**
- * 格式化format Probability內容供顯示或輸出。
- * @param value - 輸入值。
+ * 將 0–1 機率轉成百分比顯示。
+ *
+ * @param params - `value` 為機率。
+ * @returns 百分比字串。
  */
-
-function formatProbability(value: number) {
+const formatProbability = ({ value }: { value: number }): string => {
   return `${(Number(value || 0) * 100).toFixed(2)}%`
 }
 
 /**
- * 格式化format Minutes內容供顯示或輸出。
- * @param value - 輸入值。
+ * 將分鐘數格式化為可讀時間描述。
+ *
+ * @param params - `value` 為分鐘數。
+ * @returns 如「分鐘」「小時」或「極長時間」。
  */
-
-function formatMinutes(value: number) {
+const formatMinutes = ({ value }: { value: number }): string => {
   const minutes = Number(value || 0)
   if (!Number.isFinite(minutes) || minutes <= 0) {
     return '-'
@@ -141,11 +165,12 @@ function formatMinutes(value: number) {
 }
 
 /**
- * 格式化format Date Time內容供顯示或輸出。
- * @param value - 輸入值。
+ * 將時間戳（毫秒）格式化為本地日期時間字串。
+ *
+ * @param params - `value` 為毫秒時間戳。
+ * @returns `YYYY-MM-DD HH:mm:ss` 或 `-`。
  */
-
-function formatDateTime(value: number) {
+const formatDateTime = ({ value }: { value: number }): string => {
   const ts = Number(value || 0)
   if (!Number.isFinite(ts) || ts <= 0) {
     return '-'
@@ -161,110 +186,59 @@ function formatDateTime(value: number) {
 }
 
 /**
- * 處理strategy Mode Label邏輯。
- * @param value - 輸入值。
+ * 將策略模式代碼轉為中文標籤。
+ *
+ * @param params - `value` 為後端策略模式字串。
+ * @returns 中文模式名稱。
  */
-
-function strategyModeLabel(value: string) {
+const strategyModeLabel = ({ value }: { value?: string }): string => {
   return String(value || '').toUpperCase() === 'HIGH_RATE_WAIT' ? '高利率等待模式' : '最佳成交模式'
 }
 
 /**
- * 取得load Market相關資料。
- * @param showSuccess - 函式輸入參數。
+ * 重新請求市場資料並依選項顯示提示。
+ *
+ * @param params - `showSuccess` 為真時顯示重新整理成功通知。
  */
-
-async function loadMarket(showSuccess: boolean = false) {
-  loadingMarket.value = true
-  try {
-    const response = markets
-    const data = response?.data || {}
-    market.symbol = String(data.symbol || '')
-    market.bestRateDaily = Number(data.bestRateDaily || 0)
-    market.annualizedPct = Number(data.annualizedPct || 0)
-    market.demandAmount = Number(data.demandAmount || 0)
-    borrowRows.value = Array.isArray(data.borrowDemands) ? data.borrowDemands : []
-    tradeRows.value = Array.isArray(data.trades) ? data.trades : []
-
-    if (showSuccess) {
-      notifySuccess('重新整理完成', `${selectedCurrency.value} 市場資料已更新。`)
-    }
-
-    if (data.usedFallback) {
-      ElNotification({
-        title: '市場資料切換',
-        message: `${selectedCurrency.value} 無法直接取得資料，已改用 ${data.symbol} 的公開市場資料。`,
-        type: 'warning',
-      })
-    }
-  } catch (error) {
-    borrowRows.value = []
-    tradeRows.value = []
-    market.symbol = ''
-    market.bestRateDaily = 0
-    market.annualizedPct = 0
-    market.demandAmount = 0
-    notifyError('讀取市場資料失敗', error)
-  } finally {
-    loadingMarket.value = false
-  }
-}
-
-/**
- * 處理on Switch Currency邏輯。
- * @param currency - 幣種或市場代號。
- */
-
-async function onSwitchCurrency(currency: string) {
-  if (selectedCurrency.value === currency) {
+const loadMarket = async ({ showSuccess = false }: { showSuccess?: boolean } = {}): Promise<void> => {
+  const result = await refetch()
+  if (result.error) {
     return
   }
-  selectedCurrency.value = currency
-  await loadMarket(true)
+  const payload = result.data
+  if (showSuccess && payload) {
+    notifySuccess({
+      title: '重新整理完成',
+      message: `${selectedCurrencyRef.value} 市場資料已更新。`,
+    })
+  }
+  if (payload?.usedFallback) {
+    ElNotification({
+      title: '市場資料切換',
+      message: `${selectedCurrencyRef.value} 無法直接取得資料，已改用 ${payload.symbol} 的公開市場資料。`,
+      type: 'warning',
+    })
+  }
 }
 
 /**
- * 處理open Diagnostic邏輯。
- * @param row - 函式輸入參數。
- * @param mode - 函式輸入參數。
+ * 處理手動重新整理（reFetch）按鈕點擊。
  */
-
-async function openDiagnostic(row: any, mode: string = 'LIVE') {
-  diagnosticMode.value = mode
-  diagnosticDialogVisible.value = true
-  diagnostic.value = null
-  const isSimulation = mode === 'SIMULATION'
-  if (isSimulation) {
-    loadingSimulationDiagnostic.value = true
-  } else {
-    loadingDiagnostic.value = true
-  }
-  try {
-    const payload = {
-      currency: selectedCurrency.value,
-      rateDaily: row.rateDaily,
-      amount: row.amount,
-      period: row.period,
-    }
-    const response = isSimulation
-      ? await fetchFundingsBotSimulationDiagnostic(payload)
-      : await fetchFundingsBotDiagnostic(payload)
-    diagnostic.value = response?.data || null
-  } catch (error) {
-    diagnosticDialogVisible.value = false
-    notifyError(isSimulation ? '讀取模擬診斷失敗' : '讀取策略診斷失敗', error)
-  } finally {
-    if (isSimulation) {
-      loadingSimulationDiagnostic.value = false
-    } else {
-      loadingDiagnostic.value = false
-    }
-  }
+const handleRefetchMarketClick = (): void => {
+  void loadMarket({ showSuccess: true })
 }
 
-// onMounted(async () => {
-//   await loadMarket(false)
-// })
+/**
+ * 處理幣種切換按鈕點擊。
+ *
+ * @param params - `currency` 為選取之幣種代號。
+ */
+const handleSwitchCurrency = ({ currency }: { currency: string }): void => {
+  if (selectedCurrencyRef.value === currency) {
+    return
+  }
+  selectedCurrencyRef.value = currency
+}
 </script>
 
 <template>
@@ -276,7 +250,7 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
           查看目前借款需求、最近公開成交紀錄，並診斷目前 bot 是否會承接指定需求。
         </p>
       </div>
-      <el-button type="primary" :loading="loadingMarket" @click="loadMarket(true)"
+      <el-button type="primary" :loading="loadingMarket" @click="handleRefetchMarketClick"
         >reFetch</el-button
       >
     </div>
@@ -288,9 +262,9 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
           v-for="currency in currencyOptions"
           :key="currency"
           size="small"
-          :type="selectedCurrency === currency ? 'primary' : 'default'"
+          :type="selectedCurrencyRef === currency ? 'primary' : 'default'"
           :disabled="loadingMarket"
-          @click="onSwitchCurrency(currency)"
+          @click="handleSwitchCurrency({ currency })"
         >
           {{ currency }}
         </el-button>
@@ -299,59 +273,56 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
 
     <el-card shadow="never">
       <el-descriptions :column="3" border>
-        <el-descriptions-item label="幣種">{{ selectedCurrency }}</el-descriptions-item>
+        <el-descriptions-item label="幣種">{{ selectedCurrencyRef }}</el-descriptions-item>
         <el-descriptions-item label="Market Symbol">
-          {{ marketReactive.symbol || '-' }}
+          {{ marketSummary.symbol || '-' }}
         </el-descriptions-item>
         <el-descriptions-item label="最佳借款年化">
-          {{ formatPct(marketReactive.annualizedPct, 2) }}
+          {{ formatPct({ value: marketSummary.annualizedPct, digits: 2 }) }}
         </el-descriptions-item>
         <el-descriptions-item label="最佳借款日利率">
-          {{ formatPct(marketReactive.bestRateDaily * 100, 6) }}
+          {{ formatPct({ value: marketSummary.bestRateDaily * 100, digits: 6 }) }}
         </el-descriptions-item>
         <el-descriptions-item label="借款需求總量">
-          {{ formatAmount(marketReactive.demandAmount) }}
+          {{ formatAmount({ value: marketSummary.demandAmount }) }}
         </el-descriptions-item>
-        <el-descriptions-item label="借款需求筆數">{{ borrowRowsRef.length }}</el-descriptions-item>
+        <el-descriptions-item label="借款需求筆數">{{ borrowRows.length }}</el-descriptions-item>
       </el-descriptions>
     </el-card>
 
     <el-card shadow="never">
-      <template #header>{{ selectedCurrency }} 借款需求列表</template>
+      <template #header>{{ selectedCurrencyRef }} 借款需求列表</template>
 
-      <el-table :data="borrowRowsRef" stripe v-loading="loadingMarket">
+      <el-table :data="borrowRows" stripe v-loading="loadingMarket">
         <el-table-column label="#" width="70">
           <template #default="{ $index }">{{ $index + 1 }}</template>
         </el-table-column>
         <el-table-column label="日利率" min-width="120">
-          <template #default="{ row }">{{ formatPct(row.rateDaily * 100, 6) }}</template>
+          <template #default="{ row }">{{
+            formatPct({ value: row.rateDaily * 100, digits: 6 })
+          }}</template>
         </el-table-column>
         <el-table-column label="年化率" min-width="120">
-          <template #default="{ row }">{{ formatPct(row.rateAprPct, 2) }}</template>
+          <template #default="{ row }">{{ formatPct({ value: row.rateAprPct, digits: 2 }) }}</template>
         </el-table-column>
         <el-table-column prop="period" label="天期" width="100" />
         <el-table-column prop="count" label="筆數" width="100" />
         <el-table-column label="金額" min-width="140">
-          <template #default="{ row }">{{ formatAmount(row.amount) }}</template>
+          <template #default="{ row }">{{ formatAmount({ value: row.amount }) }}</template>
         </el-table-column>
         <el-table-column label="操作" width="220" fixed="right">
-          <template #default="{ row }">
+          <template #default>
             <div class="action-buttons">
-              <el-button
-                size="small"
-                :loading="loadingDiagnostic"
-                @click="openDiagnostic(row, 'LIVE')"
-              >
-                策略診斷
-              </el-button>
-              <el-button
-                size="small"
-                type="success"
-                :loading="loadingSimulationDiagnostic"
-                @click="openDiagnostic(row, 'SIMULATION')"
-              >
-                模擬診斷
-              </el-button>
+              <el-tooltip :content="diagnosticUnavailableHint" placement="top">
+                <span class="tooltip-trigger-wrap">
+                  <el-button size="small" disabled>策略診斷</el-button>
+                </span>
+              </el-tooltip>
+              <el-tooltip :content="diagnosticUnavailableHint" placement="top">
+                <span class="tooltip-trigger-wrap">
+                  <el-button size="small" type="success" disabled>模擬診斷</el-button>
+                </span>
+              </el-tooltip>
             </div>
           </template>
         </el-table-column>
@@ -359,7 +330,7 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
     </el-card>
 
     <el-card shadow="never">
-      <template #header>已成交紀錄（{{ selectedCurrency }}）</template>
+      <template #header>已成交紀錄（{{ selectedCurrencyRef }}）</template>
 
       <el-table :data="tradeRows" stripe v-loading="loadingMarket">
         <el-table-column label="方向" width="120">
@@ -370,28 +341,28 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
           </template>
         </el-table-column>
         <el-table-column label="利率" min-width="120">
-          <template #default="{ row }">{{ formatPct(row.rateAprPct, 2) }}</template>
+          <template #default="{ row }">{{ formatPct({ value: row.rateAprPct, digits: 2 }) }}</template>
         </el-table-column>
         <el-table-column label="金額" min-width="140">
-          <template #default="{ row }">{{ formatAmount(row.amount) }}</template>
+          <template #default="{ row }">{{ formatAmount({ value: row.amount }) }}</template>
         </el-table-column>
         <el-table-column prop="period" label="天期" width="100" />
         <el-table-column label="時間" min-width="190">
-          <template #default="{ row }">{{ formatDateTime(row.mts) }}</template>
+          <template #default="{ row }">{{ formatDateTime({ value: row.mts }) }}</template>
         </el-table-column>
       </el-table>
     </el-card>
 
     <el-dialog
-      v-model="diagnosticDialogVisible"
-      :title="diagnosticMode === 'SIMULATION' ? '模擬 Bot 策略診斷' : 'Bot 策略診斷'"
+      v-model="diagnosticDialogVisibleRef"
+      :title="diagnosticModeRef === 'SIMULATION' ? '模擬 Bot 策略診斷' : 'Bot 策略診斷'"
       width="960px"
       destroy-on-close
     >
-      <div v-loading="loadingDiagnostic || loadingSimulationDiagnostic">
-        <template v-if="diagnostic">
+      <div>
+        <template v-if="diagnosticRef">
           <el-alert
-            v-if="diagnostic.mode === 'SIMULATION'"
+            v-if="diagnosticRef.mode === 'SIMULATION'"
             type="info"
             :closable="false"
             show-icon
@@ -400,56 +371,56 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
           />
 
           <el-alert
-            :type="diagnostic.gate?.canPlaceNow ? 'success' : 'warning'"
+            :type="diagnosticRef.gate?.canPlaceNow ? 'success' : 'warning'"
             :closable="false"
             show-icon
             :title="
-              diagnostic.mode === 'SIMULATION'
-                ? diagnostic.gate?.canPlaceNow
+              diagnosticRef.mode === 'SIMULATION'
+                ? diagnosticRef.gate?.canPlaceNow
                   ? '模擬結果：這筆需求會被現行策略選中。'
                   : '模擬結果：這筆需求不會被現行策略選中。'
-                : diagnostic.gate?.canPlaceNow
+                : diagnosticRef.gate?.canPlaceNow
                   ? '目前 bot 會考慮承接這筆借款需求。'
                   : '目前 bot 不會承接這筆借款需求。'
             "
           />
 
-          <el-timeline class="section-mini" v-if="(diagnostic.assumptions || []).length">
-            <el-timeline-item v-for="item in diagnostic.assumptions" :key="item" type="primary">
+          <el-timeline class="section-mini" v-if="(diagnosticRef.assumptions || []).length">
+            <el-timeline-item v-for="item in diagnosticRef.assumptions" :key="item" type="primary">
               {{ item }}
             </el-timeline-item>
           </el-timeline>
 
           <el-descriptions :column="3" border class="section">
             <el-descriptions-item label="策略模式">
-              {{ strategyModeLabel(diagnostic.bot?.strategyMode) }}
+              {{ strategyModeLabel({ value: diagnosticRef.bot?.strategyMode }) }}
             </el-descriptions-item>
             <el-descriptions-item label="Bot 幣種（僅顯示）">
-              {{ diagnostic.bot?.configuredCurrency || '-' }}
+              {{ diagnosticRef.bot?.configuredCurrency || '-' }}
             </el-descriptions-item>
             <el-descriptions-item label="本次診斷幣種">
-              {{ diagnostic.bot?.diagnosticCurrency || diagnostic.target?.currency || '-' }}
+              {{ diagnosticRef.bot?.diagnosticCurrency || diagnosticRef.target?.currency || '-' }}
             </el-descriptions-item>
             <el-descriptions-item label="目標幣種">
-              {{ diagnostic.target?.currency || '-' }}
+              {{ diagnosticRef.target?.currency || '-' }}
             </el-descriptions-item>
             <el-descriptions-item label="Funding 可用餘額">
-              {{ formatAmount(diagnostic.bot?.available) }}
+              {{ formatAmount({ value: diagnosticRef.bot?.available }) }}
             </el-descriptions-item>
             <el-descriptions-item label="可用下單餘額">
-              {{ formatAmount(diagnostic.bot?.effectiveAvailable) }}
+              {{ formatAmount({ value: diagnosticRef.bot?.effectiveAvailable }) }}
             </el-descriptions-item>
             <el-descriptions-item label="有效最小金額">
-              {{ formatAmount(diagnostic.bot?.effectiveMinAmount) }}
+              {{ formatAmount({ value: diagnosticRef.bot?.effectiveMinAmount }) }}
             </el-descriptions-item>
             <el-descriptions-item label="歷史送單次數">
-              {{ diagnostic.bot?.submittedCount || 0 }}
+              {{ diagnosticRef.bot?.submittedCount || 0 }}
             </el-descriptions-item>
             <el-descriptions-item label="ACTIVE 掛單數量">
-              {{ diagnostic.bot?.activeOffersCount || 0 }}
+              {{ diagnosticRef.bot?.activeOffersCount || 0 }}
             </el-descriptions-item>
             <el-descriptions-item label="autoRelist">
-              {{ diagnostic.bot?.autoRelist ? '開啟' : '關閉' }}
+              {{ diagnosticRef.bot?.autoRelist ? '開啟' : '關閉' }}
             </el-descriptions-item>
           </el-descriptions>
 
@@ -457,16 +428,21 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
             <h3>目標借款需求</h3>
             <el-descriptions :column="4" border>
               <el-descriptions-item label="日利率">
-                {{ formatPct((diagnostic.target?.rateDaily || 0) * 100, 6) }}
+                {{
+                  formatPct({
+                    value: (diagnosticRef.target?.rateDaily || 0) * 100,
+                    digits: 6,
+                  })
+                }}
               </el-descriptions-item>
               <el-descriptions-item label="年化率">
-                {{ formatPct(diagnostic.target?.rateAprPct || 0, 2) }}
+                {{ formatPct({ value: diagnosticRef.target?.rateAprPct || 0, digits: 2 }) }}
               </el-descriptions-item>
               <el-descriptions-item label="天期">
-                {{ diagnostic.target?.period || 0 }}
+                {{ diagnosticRef.target?.period || 0 }}
               </el-descriptions-item>
               <el-descriptions-item label="金額">
-                {{ formatAmount(diagnostic.target?.amount) }}
+                {{ formatAmount({ value: diagnosticRef.target?.amount }) }}
               </el-descriptions-item>
             </el-descriptions>
           </div>
@@ -474,12 +450,12 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
           <div class="section">
             <h3>阻擋原因</h3>
             <el-empty
-              v-if="!(diagnostic.gate?.blockers || []).length"
+              v-if="!(diagnosticRef.gate?.blockers || []).length"
               description="目前沒有阻擋原因。"
             />
             <el-timeline v-else>
               <el-timeline-item
-                v-for="item in diagnostic.gate.blockers"
+                v-for="item in diagnosticRef.gate.blockers"
                 :key="`${item.code}-${item.message}`"
                 type="warning"
               >
@@ -492,59 +468,86 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
           <div class="section">
             <h3>目前選中的最佳方案</h3>
             <el-empty
-              v-if="!diagnostic.planner?.selectedContext"
+              v-if="!diagnosticRef.planner?.selectedContext"
               description="目前沒有可用的 planner context。"
             />
             <el-descriptions v-else :column="3" border>
               <el-descriptions-item label="選中天期">
-                {{ diagnostic.planner.selectedContext.period }} 天
+                {{ diagnosticRef.planner.selectedContext.period }} 天
               </el-descriptions-item>
               <el-descriptions-item label="選中日利率">
-                {{ formatPct(diagnostic.planner.selectedContext.bestRateDaily * 100, 6) }}
+                {{
+                  formatPct({
+                    value: diagnosticRef.planner.selectedContext.bestRateDaily * 100,
+                    digits: 6,
+                  })
+                }}
               </el-descriptions-item>
               <el-descriptions-item label="選中年化率">
-                {{ formatPct(diagnostic.planner.selectedContext.bestRateAprPct, 2) }}
+                {{
+                  formatPct({
+                    value: diagnosticRef.planner.selectedContext.bestRateAprPct,
+                    digits: 2,
+                  })
+                }}
               </el-descriptions-item>
               <el-descriptions-item label="最佳金額">
-                {{ formatAmount(diagnostic.planner.selectedContext.bestAmountUsd) }}
+                {{ formatAmount({ value: diagnosticRef.planner.selectedContext.bestAmountUsd }) }}
               </el-descriptions-item>
               <el-descriptions-item label="預估成交機率">
-                {{ formatProbability(diagnostic.planner.selectedContext.fillProbability) }}
+                {{
+                  formatProbability({
+                    value: diagnosticRef.planner.selectedContext.fillProbability,
+                  })
+                }}
               </el-descriptions-item>
               <el-descriptions-item label="預估成交時間">
-                {{ formatMinutes(diagnostic.planner.selectedContext.expectedFillMinutes) }}
+                {{
+                  formatMinutes({
+                    value: diagnosticRef.planner.selectedContext.expectedFillMinutes,
+                  })
+                }}
               </el-descriptions-item>
               <el-descriptions-item label="Planner 結論">
-                {{ diagnostic.planner.selectedContext.shouldPlace ? '應下單' : '不下單' }}
+                {{ diagnosticRef.planner.selectedContext.shouldPlace ? '應下單' : '不下單' }}
               </el-descriptions-item>
               <el-descriptions-item label="最佳借款日利率">
-                {{ formatPct(diagnostic.planner.selectedContext.bestTakeableRate * 100, 6) }}
+                {{
+                  formatPct({
+                    value: diagnosticRef.planner.selectedContext.bestTakeableRate * 100,
+                    digits: 6,
+                  })
+                }}
               </el-descriptions-item>
               <el-descriptions-item label="評估天期範圍">
-                {{ (diagnostic.planner?.planningPeriods || []).join(' / ') }}
+                {{ (diagnosticRef.planner?.planningPeriods || []).join(' / ') }}
               </el-descriptions-item>
             </el-descriptions>
-            <p class="reason-text" v-if="diagnostic.planner?.selectedContext?.reason">
-              {{ diagnostic.planner.selectedContext.reason }}
+            <p class="reason-text" v-if="diagnosticRef.planner?.selectedContext?.reason">
+              {{ diagnosticRef.planner.selectedContext.reason }}
             </p>
           </div>
 
           <div class="section">
             <h3>預計掛單預覽</h3>
             <el-empty
-              v-if="!(diagnostic.planner?.ladderPreview || []).length"
+              v-if="!(diagnosticRef.planner?.ladderPreview || []).length"
               description="目前沒有預計掛單。"
             />
-            <el-table v-else :data="diagnostic.planner.ladderPreview" size="small" border>
+            <el-table v-else :data="diagnosticRef.planner.ladderPreview" size="small" border>
               <el-table-column prop="rung" label="階層" width="80" />
               <el-table-column label="金額" min-width="140">
-                <template #default="{ row }">{{ formatAmount(row.amountUsd) }}</template>
+                <template #default="{ row }">{{ formatAmount({ value: row.amountUsd }) }}</template>
               </el-table-column>
               <el-table-column label="日利率" min-width="140">
-                <template #default="{ row }">{{ formatPct(row.rate * 100, 6) }}</template>
+                <template #default="{ row }">{{
+                  formatPct({ value: row.rate * 100, digits: 6 })
+                }}</template>
               </el-table-column>
               <el-table-column label="年化率" min-width="140">
-                <template #default="{ row }">{{ formatPct(row.rate * 365 * 100, 2) }}</template>
+                <template #default="{ row }">{{
+                  formatPct({ value: row.rate * 365 * 100, digits: 2 })
+                }}</template>
               </el-table-column>
               <el-table-column prop="period" label="天期" width="100" />
             </el-table>
@@ -554,31 +557,31 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
             <h3>與目標需求的匹配結果</h3>
             <el-descriptions :column="3" border>
               <el-descriptions-item label="幣種相符">
-                {{ diagnostic.targetEvaluation?.compatibleCurrency ? '是' : '否' }}
+                {{ diagnosticRef.targetEvaluation?.compatibleCurrency ? '是' : '否' }}
               </el-descriptions-item>
               <el-descriptions-item label="天期相符">
-                {{ diagnostic.targetEvaluation?.compatiblePeriod ? '是' : '否' }}
+                {{ diagnosticRef.targetEvaluation?.compatiblePeriod ? '是' : '否' }}
               </el-descriptions-item>
               <el-descriptions-item label="利率相符">
-                {{ diagnostic.targetEvaluation?.compatibleRate ? '是' : '否' }}
+                {{ diagnosticRef.targetEvaluation?.compatibleRate ? '是' : '否' }}
               </el-descriptions-item>
               <el-descriptions-item label="可匹配掛單數量">
-                {{ diagnostic.targetEvaluation?.matchableOrderCount || 0 }}
+                {{ diagnosticRef.targetEvaluation?.matchableOrderCount || 0 }}
               </el-descriptions-item>
               <el-descriptions-item label="可承接金額">
-                {{ formatAmount(diagnostic.targetEvaluation?.targetFillableUsd) }}
+                {{ formatAmount({ value: diagnosticRef.targetEvaluation?.targetFillableUsd }) }}
               </el-descriptions-item>
               <el-descriptions-item label="是否可全部承接">
-                {{ diagnostic.targetEvaluation?.fullyConsumesTarget ? '是' : '否' }}
+                {{ diagnosticRef.targetEvaluation?.fullyConsumesTarget ? '是' : '否' }}
               </el-descriptions-item>
             </el-descriptions>
 
             <el-timeline
               class="section-mini"
-              v-if="(diagnostic.targetEvaluation?.notes || []).length"
+              v-if="(diagnosticRef.targetEvaluation?.notes || []).length"
             >
               <el-timeline-item
-                v-for="note in diagnostic.targetEvaluation.notes"
+                v-for="note in diagnosticRef.targetEvaluation.notes"
                 :key="note"
                 type="primary"
               >
@@ -647,6 +650,11 @@ async function openDiagnostic(row: any, mode: string = 'LIVE') {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.tooltip-trigger-wrap {
+  display: inline-flex;
+  vertical-align: middle;
 }
 
 .reason-text {

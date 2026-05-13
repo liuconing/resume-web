@@ -21,6 +21,7 @@
     "@tanstack/vue-query": "^5.92.9",
     "axios": "^1.13.6",
     "bignumber.js": "^11.0.0",
+    "crypto-js": "^4.2.0",
     "element-plus": "^2.13.6",
     "lodash": "^4.17.23",
     "pinia": "^3.0.4",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.3",
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^24.10.4",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/eslint-config-prettier": "^10.2.0",
