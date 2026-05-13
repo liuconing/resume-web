@@ -1,5 +1,5 @@
 ---
-description: TypeScript / JavaScript 程式碼風格規則，適用於 Cursor、Codex、AI Agent。
+description: TypeScript / JavaScript 程式碼風格規則。
 globs:
   - "**/*.ts"
   - "**/*.tsx"
@@ -76,7 +76,7 @@ const createBorrowRecord = async (
 - 沒有參數時使用空參數，不建立無意義物件。
 
 ```ts
-type UpdateUserParams = {
+interface UpdateUserParams {
   userId: string;
   name: string;
 };
@@ -125,7 +125,7 @@ const handleCreateUserClick = (): void => {
 - `on` 用於元件對外暴露。
 
 ```ts
-type UserFormProps = {
+interface UserFormProps {
   onSubmit: ({ values }: UserFormSubmitParams) => void;
   onCancel: () => void;
 };
