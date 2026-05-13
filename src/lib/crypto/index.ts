@@ -3,7 +3,9 @@
  */
 import CryptoJS from 'crypto-js'
 
-const CREDENTIAL_KEY = CryptoJS.SHA256('BITFINEX')
+const VITE_BITFINEX_ENCRYPTION_KEY = import.meta.env.VITE_BITFINEX_ENCRYPTION_KEY
+
+const CREDENTIAL_KEY = CryptoJS.SHA256(VITE_BITFINEX_ENCRYPTION_KEY)
 
 const buildAesCbcOptions = (iv: CryptoJS.lib.WordArray) => ({
   iv,
