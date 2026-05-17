@@ -4,6 +4,7 @@ import { loginUsecase, registerUsecase, type LoginParamsDto } from '@/domain/use
 import type { RegisterParamsDto } from '@/domain/usecase'
 import { Button } from '@/components'
 import { useFundingDialogs, useMutation } from '@/hooks'
+import { ElNotification } from '@/lib/element-plus'
 import {
   FundingOverviewFeatureCard,
   type FundingFeatureIcon,
@@ -41,7 +42,20 @@ const featureCards: {
 
 /** 處理登入邏輯。 */
 const handleLogin = async (data: LoginParamsDto) => {
-  await loginMutation(data)
+  const result = await loginMutation(data)
+  if (!result) {
+    ElNotification({
+      title: '登入失敗',
+      message: '登入失敗',
+      type: 'error',
+    })
+    return
+  }
+  ElNotification({
+    title: '登入成功',
+    message: '登入成功',
+    type: 'success',
+  })
   await router.push('/funding')
 }
 

@@ -8,11 +8,11 @@ export interface LoginParamsDto extends LoginParams {}
  * @param params - 傳入參數，包含 email 與密碼
  */
 export async function loginUsecase(params: LoginParamsDto): Promise<boolean> {
-  try {
-    const data = await loginRepo(params)
-    setLocalStorage(data.token)
+  const data = await loginRepo(params)
+  const token = data?.token
+  if (token) {
+    setLocalStorage(token)
     return true
-  } catch {
-    return false
   }
+  return false
 }

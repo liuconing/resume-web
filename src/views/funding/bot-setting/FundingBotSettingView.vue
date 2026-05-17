@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { ElNotification } from '@/lib/element-plus'
 import { useFetch, useMutation } from '@/hooks'
-import { formatAmount, formatTime, formatRate } from '@/utils'
+import {
+  formatAmount,
+  formatStrategyModeLabel,
+  formatTime,
+  formatRate,
+  getStatusTagType,
+  readErrorMessage,
+} from '@/utils'
 import {
   getFundingsSettingsUsecase,
   getFundingsBotStatusUsecase,
@@ -12,7 +19,6 @@ import {
   updateFundingsReserveAmountUsecase,
   updateFundingsBotConfigUsecase,
 } from '@/domain/usecase'
-
 // 支援的 funding 幣種顯示清單。
 const currencyOptions = ['TESTUSDT', 'TESTUSD', 'USDT', 'USD']
 const strategyModeOptions = [
@@ -75,11 +81,13 @@ const botStatusReactive = reactive({
   },
 })
 
-const logsPaginationReactive = reactive({
-  page: 1,
-  limit: 25,
-  total: 0,
-})
+const logsPaginationPageRef = ref(1)
+const logsPaginationLimitRef = ref(25)
+const logsPaginationTotalRef = ref(0)
+const botLogsParams = computed(() => ({
+  page: logsPaginationPageRef.value,
+  limit: logsPaginationLimitRef.value,
+}))
 
 const { refetch: refetchFundingsBotSettings } = useFetch(getFundingsSettingsUsecase, null, {
   onSuccess: (data) => {
@@ -95,13 +103,12 @@ const { refetch: refetchFundingsBotStatus } = useFetch(getFundingsBotStatusUseca
 
 const { data: botLogs, refetch: refetchFundingsBotLogs } = useFetch(
   getFundingsBotLogsUsecase,
-  { page: logsPaginationReactive.page, limit: logsPaginationReactive.limit },
+  botLogsParams,
   {
+    queryKey: ['botLogs'],
     onSuccess: (data) => {
-      console.log(data)
-      logsPaginationReactive.total = data.total
+      logsPaginationTotalRef.value = data.total
     },
-    queryKey: ['botLogs', logsPaginationReactive.page, logsPaginationReactive.limit],
   },
 )
 
@@ -115,14 +122,6 @@ const strategyModeHint = computed(() =>
     ? '高利率等待模式會提高利率權重、放寬等待時間，偏向掛在較高年化價位等待市場追價成交。'
     : '最佳成交模式會優先考慮成交機率與等待時間，選擇目前較容易成交的最佳方案。',
 )
-
-/**
- * 取得read Error相關資料。
- * @param error - 錯誤物件。
- */
-function readError(error: any) {
-  return error?.response?.data?.message || error?.message || '操作失敗'
-}
 
 /**
  * 處理notify Success邏輯。
@@ -147,47 +146,9 @@ function notifySuccess(title: string, message: string) {
 function notifyError(title: string, error: any) {
   ElNotification({
     title,
-    message: readError(error),
+    message: readErrorMessage({ error }),
     type: 'error',
   })
-}
-
-/**
- * 處理strategy Mode Label邏輯。
- * @param value - 輸入值。
- */
-
-function strategyModeLabel(value: string) {
-  // 舊資料中的 SEMI_AUTO 仍要映射到新模式。
-  let text = String(value || '').toUpperCase()
-  if (text === 'HIGH_RATE_WAIT' || text === 'SEMI_AUTO') {
-    text = 'HIGH_RATE_WAIT'
-  }
-  text = 'BEST_EXECUTION'
-
-  return text === 'HIGH_RATE_WAIT' ? '高利率等待模式' : '最佳成交模式'
-}
-
-/**
- * 處理status Tag Type邏輯。
- * @param input - 輸入值。
- */
-
-function statusTagType(input: string) {
-  const text = String(input || '').toUpperCase()
-  if (text === 'ERROR') {
-    return 'danger'
-  }
-  if (text === 'STOPPED') {
-    return 'info'
-  }
-  if (text === 'RUNNING') {
-    return 'success'
-  }
-  if (text.includes('WAIT') || text.includes('PAUSED')) {
-    return 'warning'
-  }
-  return 'primary'
 }
 
 /**
@@ -224,7 +185,7 @@ function statusTagType(input: string) {
  */
 
 function handleLogsPageChange(page: number) {
-  logsPaginationReactive.page = page
+  logsPaginationPageRef.value = page
 }
 
 /** 儲存 Bitfinex API 憑證 */
@@ -461,7 +422,7 @@ const handelSaveBotConfig = async () => {
       <template #header>目前 Bot 狀態</template>
       <el-descriptions :column="3" border>
         <el-descriptions-item label="狀態">
-          <el-tag :type="statusTagType(botStatusReactive.status)">{{
+          <el-tag :type="getStatusTagType({ value: botStatusReactive.status })">{{
             botStatusReactive.status || '-'
           }}</el-tag>
         </el-descriptions-item>
@@ -472,7 +433,7 @@ const handelSaveBotConfig = async () => {
           botStatusReactive.hasCredentials ? '是' : '否'
         }}</el-descriptions-item>
         <el-descriptions-item label="策略模式">{{
-          strategyModeLabel(botStatusReactive.config.strategyMode)
+          formatStrategyModeLabel({ value: botStatusReactive.config.strategyMode })
         }}</el-descriptions-item>
         <el-descriptions-item label="顯示幣種">{{
           botStatusReactive.config.currency || '-'
@@ -531,9 +492,9 @@ const handelSaveBotConfig = async () => {
         <el-pagination
           background
           layout="total, prev, pager, next"
-          :current-page="logsPaginationReactive.page"
-          :page-size="logsPaginationReactive.limit"
-          :total="logsPaginationReactive.total"
+          :current-page="logsPaginationPageRef"
+          :page-size="logsPaginationLimitRef"
+          :total="logsPaginationTotalRef"
           @current-change="handleLogsPageChange"
         />
       </div>

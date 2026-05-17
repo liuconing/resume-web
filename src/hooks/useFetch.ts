@@ -1,3 +1,4 @@
+import { computed, toValue, type MaybeRefOrGetter } from 'vue'
 import { useQuery, type UseQueryOptions, type QueryKey } from '@/lib/vue-query'
 import { uuid } from '@/lib/uuid'
 import { handleGlobalError, type GlobalError } from './useGlobalErrorHandler'
@@ -28,18 +29,24 @@ const formatError = (err: unknown): Error => (err instanceof Error ? err : new E
 
 export function useFetch<TData, TParams, TError extends Error = Error>(
   queryFn: (param: TParams) => Promise<TData>,
-  params: TParams,
+  params: MaybeRefOrGetter<TParams>,
   options?: UseFetchOptions<TData, TError>,
 ) {
+  const queryKey = computed(() => {
+    const currentParams = toValue(params)
+    return options?.queryKey ? [...options.queryKey, currentParams] : [uuid(), currentParams]
+  })
+
   return useQuery({
     ...options,
-    queryKey: options?.queryKey ? [...options.queryKey, params] : [uuid(), params],
+    queryKey,
     queryFn: async () => {
       let result: TData | undefined
       let error: TError | undefined
+      const currentParams = toValue(params)
 
       try {
-        result = await queryFn(params)
+        result = await queryFn(currentParams)
         options?.onSuccess?.(result)
         return result
       } catch (err: unknown) {
@@ -54,7 +61,7 @@ export function useFetch<TData, TParams, TError extends Error = Error>(
         options?.onSettled?.(result!, error)
         // if (options?.enableLogger) {
         //   console.groupCollapsed(`useFetch: ${queryFn.name || 'anonymous'}`)
-        //   console.log({ params, result, error })
+        //   console.log({ params: currentParams, result, error })
         //   console.groupEnd()
         // }
       }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useFetch } from '@/hooks'
-import { formatAmount } from '@/utils'
+import { formatAmount, formatDateTime } from '@/utils'
 import { getFundingsOverviewUsecase } from '@/domain/usecase'
 
 const {
@@ -21,7 +21,7 @@ const isLoading = computed(() => isLoadingOverviewData.value || isFetchingOvervi
 <template>
   <div class="page">
     <div class="ml-auto">
-      更新時間: {{ new Date(overviewData?.updatedAt || '').toLocaleString() }}
+      更新時間: {{ formatDateTime({ value: overviewData?.updatedAt }) }}
     </div>
     <div class="toolbar">
       <h2>資金總覽</h2>

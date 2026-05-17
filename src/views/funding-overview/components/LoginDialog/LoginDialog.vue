@@ -35,11 +35,11 @@ const submitLogin = async () => {
   <Dialog v-model="dialogModel" title="使用者登入" max-width="27.5rem" close-on-backdrop>
     <form class="flex flex-col gap-4.5" @submit.prevent="submitLogin">
       <label class="flex flex-col gap-1.5">
-        <span class="text-[0.8125rem] font-semibold text-slate-600">Email</span>
+        <span class="text-[0.8125rem] font-semibold text-slate-600">Email (測試帳號: admin)</span>
         <TextInput v-model.trim="loginForm.email" type="email" autocomplete="email" />
       </label>
       <label class="flex flex-col gap-1.5">
-        <span class="text-[0.8125rem] font-semibold text-slate-600">密碼</span>
+        <span class="text-[0.8125rem] font-semibold text-slate-600">密碼 (測試密碼: abcd123)</span>
         <div class="flex items-stretch gap-2">
           <TextInput
             v-model.trim="loginForm.password"

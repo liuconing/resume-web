@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { useQuery } from '@/lib/vue-query'
+import { useFetch } from '@/hooks'
 import { ElNotification } from '@/lib/element-plus'
 import { getFundingsMarketUsecase } from '@/domain/usecase'
+import {
+  formatDateTime,
+  formatDisplayAmount as formatAmount,
+  formatMinutes,
+  formatPercent as formatPct,
+  formatProbability,
+  formatStrategyModeLabel as strategyModeLabel,
+  readErrorMessage,
+} from '@/utils'
 
 const MARKET_LEN = 25
 
@@ -16,15 +25,13 @@ const diagnosticModeRef = ref('LIVE')
 
 const diagnosticUnavailableHint = '診斷 API／usecase 尚未接上，無法使用'
 
-const marketQuery = useQuery({
-  queryKey: computed(() => ['fundingsMarket', selectedCurrencyRef.value, MARKET_LEN]),
-  queryFn: () =>
-    getFundingsMarketUsecase({
-      currency: selectedCurrencyRef.value,
-      len: MARKET_LEN,
-    }),
-  refetchOnWindowFocus: false,
-  retry: false,
+const marketQueryParams = computed(() => ({
+  currency: selectedCurrencyRef.value,
+  len: MARKET_LEN,
+}))
+
+const marketQuery = useFetch(getFundingsMarketUsecase, marketQueryParams, {
+  queryKey: ['fundingsMarket'],
 })
 
 const { data, isFetching: loadingMarket, refetch } = marketQuery
@@ -56,17 +63,6 @@ const tradeRows = computed(() => {
 })
 
 /**
- * 從錯誤物件取出可供顯示的訊息字串。
- *
- * @param params - `error` 為 API 或執行期錯誤。
- * @returns 使用者可讀的錯誤說明。
- */
-const readError = ({ error }: { error: unknown }): string => {
-  const err = error as { response?: { data?: { message?: string } }; message?: string }
-  return err?.response?.data?.message || err?.message || '操作失敗'
-}
-
-/**
  * 顯示成功通知。
  *
  * @param params - `title`、`message` 為通知標題與內文。
@@ -87,7 +83,7 @@ const notifySuccess = ({ title, message }: { title: string; message: string }): 
 const notifyError = ({ title, error }: { title: string; error: unknown }): void => {
   ElNotification({
     title,
-    message: readError({ error }),
+    message: readErrorMessage({ error }),
     type: 'error',
   })
 }
@@ -110,90 +106,6 @@ watch(
     handleMarketQueryError(err)
   },
 )
-
-/**
- * 將數值格式化為帶百分比的顯示字串。
- *
- * @param params - `value` 為原始數值，`digits` 為小數位數。
- * @returns 例如 `1.23%`。
- */
-const formatPct = ({ value, digits = 2 }: { value: number; digits?: number }): string => {
-  return `${Number(value || 0).toFixed(digits)}%`
-}
-
-/**
- * 將金額格式化為繁中地區分隔顯示。
- *
- * @param params - `value` 為金額，預設依 0 處理。
- * @returns 地區化數字字串。
- */
-const formatAmount = ({ value = 0 }: { value?: number }): string => {
-  return Number(value || 0).toLocaleString('zh-TW', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 8,
-  })
-}
-
-/**
- * 將 0–1 機率轉成百分比顯示。
- *
- * @param params - `value` 為機率。
- * @returns 百分比字串。
- */
-const formatProbability = ({ value }: { value: number }): string => {
-  return `${(Number(value || 0) * 100).toFixed(2)}%`
-}
-
-/**
- * 將分鐘數格式化為可讀時間描述。
- *
- * @param params - `value` 為分鐘數。
- * @returns 如「分鐘」「小時」或「極長時間」。
- */
-const formatMinutes = ({ value }: { value: number }): string => {
-  const minutes = Number(value || 0)
-  if (!Number.isFinite(minutes) || minutes <= 0) {
-    return '-'
-  }
-  if (minutes >= 1_000_000) {
-    return '極長時間'
-  }
-  if (minutes >= 60) {
-    return `${(minutes / 60).toFixed(2)} 小時`
-  }
-  return `${minutes.toFixed(2)} 分鐘`
-}
-
-/**
- * 將時間戳（毫秒）格式化為本地日期時間字串。
- *
- * @param params - `value` 為毫秒時間戳。
- * @returns `YYYY-MM-DD HH:mm:ss` 或 `-`。
- */
-const formatDateTime = ({ value }: { value: number }): string => {
-  const ts = Number(value || 0)
-  if (!Number.isFinite(ts) || ts <= 0) {
-    return '-'
-  }
-  const date = new Date(ts)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-  const seconds = String(date.getSeconds()).padStart(2, '0')
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
-}
-
-/**
- * 將策略模式代碼轉為中文標籤。
- *
- * @param params - `value` 為後端策略模式字串。
- * @returns 中文模式名稱。
- */
-const strategyModeLabel = ({ value }: { value?: string }): string => {
-  return String(value || '').toUpperCase() === 'HIGH_RATE_WAIT' ? '高利率等待模式' : '最佳成交模式'
-}
 
 /**
  * 重新請求市場資料並依選項顯示提示。
