@@ -66,7 +66,7 @@ const workExperiences = markRaw<WorkExperienceList[]>([
       '使用 React 與 Next.js 製作遊戲入口平台且串接遊戲API，基礎功能包括註冊登入、充值、提領、查詢交易紀錄、切換貨幣、貨幣帶入遊戲內。',
       '使用 React Native 製作遊戲入口平台的手機版本。',
     ],
-    seniority: 1,
+    seniority: 1.5,
   },
 ])
 
@@ -93,9 +93,10 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
             Front End Developer
           </h1>
 
-          <p class="font-normal text-gray-600 text-md md:text-xl mb-16">
-            有相關前端實務4年多經驗，經常使用Vue.js/React.js
-            做為開發前端工具，具備良好的團隊溝通，喜歡與同事們互相分享技術經驗或新知。
+          <p class="w-3/4 mx-auto font-normal text-gray-600 text-md md:text-xl mb-16">
+            有相關前端實務4年多經驗，經常使用 React 做為開發前端工具，也有自我挑戰使用 Vue3
+            做為開發前端工具，使用 Cursor 跟 Codex 輔助專案的開發、除錯、優化，並在使用人工 Review
+            程式碼以免出錯。
           </p>
           <div class="flex items-center justify-center">
             <a
@@ -117,6 +118,29 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
         <h1 class="font-medium text-gray-700 text-3xl md:text-4xl mb-5">專業技能</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="bg-gray-50 px-8 py-10 rounded-md">
+            <h4 class="font-medium text-gray-700 text-lg mb-4">前端框架</h4>
+
+            <ul class="font-normal text-gray-500 text-md mb-4 list-disc">
+              <li>熟練使用主流的前端框架（React、Vue3、React Native）</li>
+              <li>
+                熟悉 Vue3 Composition API 與 React Hooks、Context API、Redux
+                等現代狀態管理與組件架構，具備 React
+                路由（Router）、效能優化、SEO、無障礙設計（Accessibility）、國際化、測試、部署及監控等完整開發與最佳化經驗。
+              </li>
+            </ul>
+          </div>
+
+          <div class="bg-gray-50 px-8 py-10 rounded-md">
+            <h4 class="font-medium text-gray-700 text-lg mb-4">AI 輔助開發</h4>
+
+            <ul class="font-normal text-gray-500 text-md mb-4 list-disc">
+              <li>使用 Cursor 手動針對程式碼進行優化、除錯、最佳化。</li>
+              <li>使用 Codex 輔助撰寫程式碼。</li>
+              <li>建立個人或公司的開發規範，限制AI的行為。</li>
+            </ul>
+          </div>
+
           <div class="bg-gray-50 px-8 py-10 rounded-md">
             <h4 class="font-medium text-gray-700 text-lg mb-4">HTML</h4>
 
@@ -146,19 +170,6 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
               <li>掌握 JavaScript 基礎，包括數據類型、控制結構、函數、對象和數組。</li>
               <li>理解事件處理、DOM 操作和異步編程（如 Promises、async/await）。</li>
               <li>熟悉 ECMAScript 的最新標準和特性。</li>
-            </ul>
-          </div>
-
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <h4 class="font-medium text-gray-700 text-lg mb-4">前端框架</h4>
-
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc">
-              <li>熟練使用主流的前端框架（React、Vue3、React Native）</li>
-              <li>
-                熟悉 Vue3 Composition API 與 React Hooks、Context API、Redux
-                等現代狀態管理與組件架構，具備 React
-                路由（Router）、效能優化、SEO、無障礙設計（Accessibility）、國際化、測試、部署及監控等完整開發與最佳化經驗。
-              </li>
             </ul>
           </div>
 
