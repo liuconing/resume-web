@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://resume-web.zeabur.app/</loc>
+  </url>
+  <url>
+    <loc>https://resume-web.zeabur.app/fortune</loc>
+  </url>
+  <url>
+    <loc>https://resume-web.zeabur.app/airQuality</loc>
+  </url>
+  <url>
+    <loc>https://resume-web.zeabur.app/funding-overview</loc>
+  </url>
+  <url>
+    <loc>https://resume-web.zeabur.app/funding/home</loc>
+  </url>
+  <url>
+    <loc>https://resume-web.zeabur.app/funding/bot-settings</loc>
+  </url>
+  <url>
+    <loc>https://resume-web.zeabur.app/funding/market</loc>
+  </url>
+  <url>
+    <loc>https://resume-web.zeabur.app/funding/loans</loc>
+  </url>
+</urlset>
