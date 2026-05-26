@@ -238,17 +238,6 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
               <li>使用 TanStack Query 管理資料狀態</li>
             </ul>
           </RouterLink>
-          <RouterLink class="bg-gray-50 px-8 py-10 rounded-md h-full" to="/friendlyrestaurant">
-            <h6 class="font-semibold text-gray-500 text-md mb-4">友善店家查詢網站</h6>
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
-              <li>使用 Vue3</li>
-              <li>使用 Axios http requests</li>
-              <li>使用 政府資料開放平臺 資料</li>
-              <li>使用 TanStack Query 管理資料狀態</li>
-              <li>使用 OpenStreetMap 製作 Map 畫面</li>
-              <li>Node.js 處理 CORS 問題</li>
-            </ul>
-          </RouterLink>
 
           <RouterLink class="bg-gray-50 px-8 py-10 rounded-md h-full" to="/fortune">
             <h6 class="font-semibold text-gray-500 text-md mb-4">神明求籤</h6>
