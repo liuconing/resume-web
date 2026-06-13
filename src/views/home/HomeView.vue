@@ -63,8 +63,9 @@ const workExperiences = markRaw<WorkExperienceList[]>([
     position: 'Front-End Developer',
     duration: '2024年7月 - 2026年1月',
     responsibilities: [
-      '使用 React 與 Next.js 製作遊戲入口平台且串接遊戲API，基礎功能包括註冊登入、充值、提領、查詢交易紀錄、切換貨幣、貨幣帶入遊戲內。',
-      '使用 React Native 製作遊戲入口平台的手機版本。',
+      '使用 React、React Native 與 Next.js 開發跨平台 Web 與 Mobile 應用，提升前端程式碼共用性與開發效率。',
+      '協助團隊遊戲入口平台核心功能開發，完成會員註冊、登入驗證、個人資料管理與會員中心功能建置。',
+      '建置儲值與會員帳務系統，串接後端交易 API，實現即時交易資訊與會員資料查詢功能。',
     ],
     seniority: 1.5,
   },
@@ -75,36 +76,47 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
 </script>
 
 <template>
-  <main class="bg-gray-100">
-    <section class="py-10 md:py-16">
+  <main class="home min-h-screen bg-[#0a0a0b] text-zinc-100">
+    <section class="py-16 md:py-28">
       <div class="container mx-auto px-4">
         <div class="text-center">
-          <div class="flex justify-center mb-16">
+          <div class="reveal flex justify-center mb-10">
             <img
-              class="size-16 rounded-full"
+              class="size-20 rounded-full ring-1 ring-emerald-400/40 shadow-[0_0_30px_-8px] shadow-emerald-400/40"
               src="https://i.imgur.com/vTWoB7o.png"
               alt="劉文華（Ellis）"
             />
           </div>
 
-          <h6 class="font-medium text-gray-600 text-lg md:text-2xl uppercase mb-8">劉文華 Ellis</h6>
+          <p
+            class="reveal font-mono text-xs md:text-sm tracking-[0.35em] uppercase text-emerald-400/80 mb-6"
+            style="animation-delay: 80ms"
+          >
+            // 劉文華 · Ellis
+          </p>
 
-          <h1 class="font-normal text-gray-900 text-4xl md:text-7xl leading-none mb-8">
+          <h1
+            class="reveal font-semibold text-5xl md:text-8xl leading-[1.05] mb-8 bg-linear-to-r from-emerald-300 via-teal-200 to-cyan-300 bg-clip-text text-transparent"
+            style="animation-delay: 160ms"
+          >
             Front End Developer
           </h1>
 
-          <p class="w-3/4 mx-auto font-normal text-gray-600 text-md md:text-xl mb-16">
+          <p
+            class="reveal w-full md:w-3/4 mx-auto font-normal text-zinc-400 text-base md:text-xl leading-relaxed mb-12"
+            style="animation-delay: 240ms"
+          >
             有相關前端實務4年多經驗，經常使用 React 做為開發前端工具，也有自我挑戰使用 Vue3
             做為開發前端工具，使用 Cursor 跟 Codex 輔助專案的開發、除錯、優化，並在使用人工 Review
             程式碼以免出錯。
           </p>
-          <div class="flex items-center justify-center">
+          <div class="reveal flex items-center justify-center" style="animation-delay: 320ms">
             <a
               v-for="item in links"
               :key="item.url"
               :href="item.url"
               target="_blank"
-              class="mx-2 px-7 py-3 md:px-9 md:py-4 font-medium md:font-semibold bg-gray-700 text-gray-50 text-sm rounded-md hover:bg-gray-400 transition ease-linear duration-500"
+              class="mx-2 px-7 py-3 md:px-9 md:py-4 bg-white/3 border border-white/10 text-zinc-50 text-sm rounded-lg hover:border-emerald-400/50 hover:bg-emerald-400/10 transition duration-300"
             >
               <img class="size-6" :src="item.svg" :alt="item.url" />
             </a>
@@ -113,15 +125,20 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
       </div>
     </section>
 
-    <section class="py-10 md:py-16">
+    <section class="py-12 md:py-20">
       <div class="container mx-auto px-4">
-        <h1 class="font-medium text-gray-700 text-3xl md:text-4xl mb-5">專業技能</h1>
+        <p class="reveal font-mono text-xs tracking-[0.3em] uppercase text-emerald-400/80 mb-3">
+          // skills
+        </p>
+        <h2 class="reveal font-semibold text-zinc-100 text-3xl md:text-4xl mb-10">專業技能</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <h4 class="font-medium text-gray-700 text-lg mb-4">前端框架</h4>
+          <div class="reveal card">
+            <h4 class="font-medium text-zinc-100 text-lg mb-4">
+              <span class="text-emerald-400">#</span> 前端框架
+            </h4>
 
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc">
+            <ul class="font-normal text-zinc-400 text-sm leading-relaxed mb-1 list-disc pl-4">
               <li>熟練使用主流的前端框架（React、Vue3、React Native）</li>
               <li>
                 熟悉 Vue3 Composition API 與 React Hooks、Context API、Redux
@@ -131,20 +148,24 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
             </ul>
           </div>
 
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <h4 class="font-medium text-gray-700 text-lg mb-4">AI 輔助開發</h4>
+          <div class="reveal card" style="animation-delay: 60ms">
+            <h4 class="font-medium text-zinc-100 text-lg mb-4">
+              <span class="text-emerald-400">#</span> AI 輔助開發
+            </h4>
 
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc">
+            <ul class="font-normal text-zinc-400 text-sm leading-relaxed mb-1 list-disc pl-4">
               <li>使用 Cursor 手動針對程式碼進行優化、除錯、最佳化。</li>
               <li>使用 Codex 輔助撰寫程式碼。</li>
               <li>建立個人或公司的開發規範，限制AI的行為。</li>
             </ul>
           </div>
 
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <h4 class="font-medium text-gray-700 text-lg mb-4">HTML</h4>
+          <div class="reveal card" style="animation-delay: 120ms">
+            <h4 class="font-medium text-zinc-100 text-lg mb-4">
+              <span class="text-emerald-400">#</span> HTML
+            </h4>
 
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc">
+            <ul class="font-normal text-zinc-400 text-sm leading-relaxed mb-1 list-disc pl-4">
               <li>理解 HTML 的基本結構和語義。</li>
               <li>
                 掌握使用 HTML5 新增的元素和屬性，如語義化標籤、表單輸入類型、影片和音樂元素等。
@@ -152,10 +173,12 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
             </ul>
           </div>
 
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <h4 class="font-medium text-gray-700 text-lg mb-4">CSS</h4>
+          <div class="reveal card" style="animation-delay: 180ms">
+            <h4 class="font-medium text-zinc-100 text-lg mb-4">
+              <span class="text-emerald-400">#</span> CSS
+            </h4>
 
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc">
+            <ul class="font-normal text-zinc-400 text-sm leading-relaxed mb-1 list-disc pl-4">
               <li>掌握基礎的 CSS，包括選擇器、盒模型、布局（如浮動、定位）、字體和顏色。</li>
               <li>熟悉 CSS3 的新特性，如動畫、過渡、變形、彈性盒子布局（Flexbox）等。</li>
               <li>響應式和自適應設計（Responsive Web Design）</li>
@@ -163,20 +186,24 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
             </ul>
           </div>
 
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <h4 class="font-medium text-gray-700 text-lg mb-4">JavaScript</h4>
+          <div class="reveal card" style="animation-delay: 240ms">
+            <h4 class="font-medium text-zinc-100 text-lg mb-4">
+              <span class="text-emerald-400">#</span> JavaScript
+            </h4>
 
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc">
+            <ul class="font-normal text-zinc-400 text-sm leading-relaxed mb-1 list-disc pl-4">
               <li>掌握 JavaScript 基礎，包括數據類型、控制結構、函數、對象和數組。</li>
               <li>理解事件處理、DOM 操作和異步編程（如 Promises、async/await）。</li>
               <li>熟悉 ECMAScript 的最新標準和特性。</li>
             </ul>
           </div>
 
-          <div class="bg-gray-50 px-8 py-10 rounded-md">
-            <h4 class="font-medium text-gray-700 text-lg mb-4">GIT</h4>
+          <div class="reveal card" style="animation-delay: 300ms">
+            <h4 class="font-medium text-zinc-100 text-lg mb-4">
+              <span class="text-emerald-400">#</span> GIT
+            </h4>
 
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc">
+            <ul class="font-normal text-zinc-400 text-sm leading-relaxed mb-1 list-disc pl-4">
               <li>理解版本控制的基本概念，熟練使用 Git 進行代碼管理和協作。</li>
               <li>熟悉 Git Flow 協作流程</li>
             </ul>
@@ -185,91 +212,159 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
       </div>
     </section>
 
-    <section class="py-10 md:py-16">
+    <section class="py-12 md:py-20">
       <div class="container mx-auto px-4">
-        <h1 class="font-medium text-gray-700 text-3xl md:text-4xl mb-5">職務經歷</h1>
+        <p class="reveal font-mono text-xs tracking-[0.3em] uppercase text-emerald-400/80 mb-3">
+          // experience
+        </p>
+        <h2 class="reveal font-semibold text-zinc-100 text-3xl md:text-4xl mb-3">職務經歷</h2>
 
-        <p class="font-normal text-gray-500 text-xs md:text-base mb-20">
+        <p class="reveal font-normal text-zinc-500 text-sm md:text-base mb-12">
           以下是我在各公司的職務經歷
         </p>
-        <div>
-          <div class="flex flex-row justify-between">
-            <h6 class="w-full font-medium text-gray-400 text-base uppercase">公司名稱</h6>
-            <h6 class="w-1/3 font-medium text-gray-400 text-center text-base uppercase">職務</h6>
-            <h6 class="w-1/3 font-medium text-gray-400 text-center text-base uppercase">
-              任職時間（年）
-            </h6>
-          </div>
-          <div class="flex flex-col justify-between">
-            <div
-              class="flex justify-between my-5"
-              v-for="item in workExperiencesNewestFirst"
-              :key="item.companyName"
-            >
-              <div class="w-full">
-                <h4 class="font-medium text-gray-700 text-lg mb-2 inline">
-                  {{ item.companyName }}
-                </h4>
-                <span class="font-normal text-gray-300">/ {{ item.duration }}</span>
-                <ul class="list-inside list-disc ml-3">
-                  <li
-                    class="mt-3 text-sm text-gray-800"
-                    v-for="items in item.responsibilities"
-                    :key="items"
-                  >
-                    {{ items }}
-                  </li>
-                </ul>
-              </div>
-              <p class="w-1/3 font-normal text-gray-400 text-center text-base">
-                Front-End Developer
-              </p>
-              <p class="w-1/3 font-normal text-gray-400 text-center text-base">
-                {{ item.seniority }}
-              </p>
+
+        <div class="flex flex-col gap-5">
+          <div
+            class="reveal card md:flex md:items-start md:gap-8"
+            v-for="item in workExperiencesNewestFirst"
+            :key="item.companyName"
+          >
+            <div class="md:w-56 md:shrink-0 mb-4 md:mb-0">
+              <p class="font-mono text-xs text-emerald-400/80 mb-2">{{ item.duration }}</p>
+              <p class="text-zinc-300 text-sm">{{ item.position }}</p>
+              <p class="font-mono text-xs text-zinc-500 mt-1">{{ item.seniority }} 年</p>
+            </div>
+            <div class="w-full md:border-l md:border-white/10 md:pl-8">
+              <h4 class="font-medium text-zinc-100 text-lg mb-3">
+                {{ item.companyName }}
+              </h4>
+              <ul class="list-disc pl-4 space-y-2">
+                <li
+                  class="text-sm text-zinc-400 leading-relaxed"
+                  v-for="items in item.responsibilities"
+                  :key="items"
+                >
+                  {{ items }}
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="py-5 md:py-16">
+    <section class="py-12 md:py-24">
       <div class="container mx-auto px-4">
-        <h1 class="font-medium text-gray-700 text-3xl md:text-4xl mb-5">作品</h1>
+        <p class="reveal font-mono text-xs tracking-[0.3em] uppercase text-emerald-400/80 mb-3">
+          // works
+        </p>
+        <h2 class="reveal font-semibold text-zinc-100 text-3xl md:text-4xl mb-3">作品</h2>
 
-        <p class="font-normal text-gray-500 text-xs md:text-base mb-10 md:mb-20">應用展示區</p>
+        <p class="reveal font-normal text-zinc-500 text-sm md:text-base mb-12">應用展示區</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[500px]">
-          <RouterLink class="bg-gray-50 px-8 py-10 rounded-md h-full" to="/airQuality">
-            <h6 class="font-semibold text-gray-500 text-md mb-4">空氣品質觀測網站</h6>
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
-              <li>使用 Vue3</li>
-              <li>使用 Axios http requests</li>
-              <li>使用 環境資料開放平臺 資料</li>
-              <li>使用 TanStack Query 管理資料狀態</li>
-            </ul>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <RouterLink class="reveal card card-link h-full" to="/airQuality">
+            <h6 class="font-semibold text-zinc-100 text-lg mb-2">空氣品質觀測網站</h6>
+            <p class="text-zinc-500 text-sm mb-5">即時空氣品質資料視覺化</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="tag">Vue3</span>
+              <span class="tag">Axios</span>
+              <span class="tag">環境資料開放平臺</span>
+              <span class="tag">TanStack Query</span>
+            </div>
           </RouterLink>
 
-          <RouterLink class="bg-gray-50 px-8 py-10 rounded-md h-full" to="/fortune">
-            <h6 class="font-semibold text-gray-500 text-md mb-4">神明求籤</h6>
-            <p class="text-gray-500 text-sm mb-4">祈福抽籤，神明指引未來方向</p>
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
-              <li>使用 Vue3</li>
-              <li>使用 Vue transition 與 CSS 動畫切換效果</li>
-            </ul>
+          <RouterLink
+            class="reveal card card-link h-full"
+            to="/fortune"
+            style="animation-delay: 80ms"
+          >
+            <h6 class="font-semibold text-zinc-100 text-lg mb-2">神明求籤</h6>
+            <p class="text-zinc-500 text-sm mb-5">祈福抽籤，神明指引未來方向</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="tag">Vue3</span>
+              <span class="tag">Vue transition</span>
+              <span class="tag">CSS 動畫</span>
+            </div>
           </RouterLink>
 
-          <RouterLink class="bg-gray-50 px-8 py-10 rounded-md h-full" to="/funding-overview">
-            <h6 class="font-semibold text-gray-500 text-md mb-4">放貸機器人</h6>
-            <p class="text-gray-500 text-sm mb-4">以自動化策略管理資金配置</p>
-            <ul class="font-normal text-gray-500 text-md mb-4 list-disc pl-4">
-              <li>使用 Vue3</li>
-              <li>使用 Element Plus</li>
-              <li>使用 TanStack Query 管理資料狀態</li>
-            </ul>
+          <RouterLink
+            class="reveal card card-link h-full"
+            to="/funding-overview"
+            style="animation-delay: 160ms"
+          >
+            <h6 class="font-semibold text-zinc-100 text-lg mb-2">放貸機器人</h6>
+            <p class="text-zinc-500 text-sm mb-5">以自動化策略管理資金配置</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="tag">Vue3</span>
+              <span class="tag">Element Plus</span>
+              <span class="tag">TanStack Query</span>
+            </div>
           </RouterLink>
         </div>
       </div>
     </section>
   </main>
 </template>
+
+<style scoped>
+.card {
+  border-radius: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background-color: rgb(255 255 255 / 0.03);
+  padding: 2rem;
+  transition:
+    border-color 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgb(52 211 153 / 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px -24px rgb(52 211 153 / 0.5);
+}
+
+.card-link {
+  display: block;
+}
+
+.tag {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  color: rgb(212 212 216);
+}
+
+.reveal {
+  opacity: 0;
+  animation: fadeInUp 0.7s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    animation: none;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+}
+</style>
