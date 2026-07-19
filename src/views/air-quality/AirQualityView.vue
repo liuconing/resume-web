@@ -7,8 +7,10 @@ import type { AirQualityIndexDto } from '@/domain/usecase'
 type AqiStyle = { bg: string; status: string }
 type AirQualityAreaRow = AirQualityIndexDto & { aqiStyle: AqiStyle }
 
-const targetElement = ref<HTMLElement | null>(null)
+// 選擇縣市
 const selectCounty = ref<string>('')
+
+// 選擇地區
 const selectedArea = ref<AirQualityAreaRow | null>(null)
 
 const { data: airQualityData, isLoading } = useFetch(getAirQualityIndexUsecase, null)
@@ -41,15 +43,9 @@ const areas = computed(() => {
     }))
 })
 
-const scrollToElement = () => {
-  nextTick(() => {
-    targetElement.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  })
-}
-
+// 選擇地區
 const handleSelectArea = (item: AirQualityAreaRow) => {
   selectedArea.value = item
-  scrollToElement()
 }
 </script>
 <template>
@@ -68,9 +64,7 @@ const handleSelectArea = (item: AirQualityAreaRow) => {
               :disabled="isLoading"
             >
               <option value="">請選擇縣市</option>
-              <option v-for="city in citys" :key="city" :value="city">
-                {{ city }}
-              </option>
+              <option v-for="city in citys" :key="city" :value="city">{{ city }}</option>
             </select>
           </div>
           <div class="cute-legend-wrap">
@@ -114,6 +108,9 @@ const handleSelectArea = (item: AirQualityAreaRow) => {
       <template v-else>
         <div class="cute-subheader">
           <h2 class="cute-subtitle">{{ selectCounty }}</h2>
+          <p v-if="selectedArea?.publishtime" class="ml-auto">
+            更新時間：{{ selectedArea?.publishtime }}
+          </p>
         </div>
 
         <div class="cute-table-wrap" ref="targetElement">
