@@ -9,7 +9,13 @@ export interface GetFundingsSettingsDto extends GetFundingsSettingsRes {}
  */
 export async function getFundingsSettingsUsecase(): Promise<GetFundingsSettingsDto> {
   const res = await getFundingsSettings()
-  res.apiKey = decryptCredentialForDisplay({ payload: res.apiKey })
-  res.apiSecret = decryptCredentialForDisplay({ payload: res.apiSecret })
+  res.apiKey =
+    decryptCredentialForDisplay({ payload: res.apiKey }).slice(0, 3) +
+    '***********' +
+    decryptCredentialForDisplay({ payload: res.apiKey }).slice(-3)
+  res.apiSecret =
+    decryptCredentialForDisplay({ payload: res.apiSecret }).slice(0, 3) +
+    '***********' +
+    decryptCredentialForDisplay({ payload: res.apiSecret }).slice(-3)
   return res
 }

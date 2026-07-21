@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { computed, markRaw } from 'vue'
+import { airQualityHome, fortuneHome, fundingHome } from '@/assets'
 import type { Links, WorkExperienceList } from './type'
 
 const links = markRaw<Links[]>([
@@ -264,6 +265,11 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <RouterLink class="reveal card card-link h-full" to="/airQuality">
+            <img
+              :src="airQualityHome"
+              alt="空氣品質觀測網站"
+              class="w-full h-48 object-cover rounded-lg mb-4"
+            />
             <h6 class="font-semibold text-zinc-100 text-lg mb-2">空氣品質觀測網站</h6>
             <p class="text-zinc-500 text-sm mb-5">即時空氣品質資料視覺化</p>
             <div class="flex flex-wrap gap-2">
@@ -279,6 +285,11 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
             to="/fortune"
             style="animation-delay: 80ms"
           >
+            <img
+              :src="fortuneHome"
+              alt="神明求籤"
+              class="w-full h-48 object-cover rounded-lg mb-4"
+            />
             <h6 class="font-semibold text-zinc-100 text-lg mb-2">神明求籤</h6>
             <p class="text-zinc-500 text-sm mb-5">祈福抽籤，神明指引未來方向</p>
             <div class="flex flex-wrap gap-2">
@@ -293,6 +304,11 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
             to="/funding-overview"
             style="animation-delay: 160ms"
           >
+            <img
+              :src="fundingHome"
+              alt="放貸機器人"
+              class="w-full h-48 object-cover rounded-lg mb-4"
+            />
             <h6 class="font-semibold text-zinc-100 text-lg mb-2">放貸機器人</h6>
             <p class="text-zinc-500 text-sm mb-5">以自動化策略管理資金配置</p>
             <div class="flex flex-wrap gap-2">

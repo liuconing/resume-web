@@ -18,13 +18,6 @@ const MARKET_LEN = 25
 const selectedCurrencyRef = ref('TESTUSDT')
 const currencyOptions = ['TESTUSDT', 'TESTUSD', 'USDT', 'USD']
 
-const diagnosticDialogVisibleRef = ref(false)
-/** 預留：接上診斷 usecase 後改為明確 DTO 型別 */
-const diagnosticRef = ref<any>(null)
-const diagnosticModeRef = ref('LIVE')
-
-const diagnosticUnavailableHint = '診斷 API／usecase 尚未接上，無法使用'
-
 const marketQueryParams = computed(() => ({
   currency: selectedCurrencyRef.value,
   len: MARKET_LEN,
@@ -112,7 +105,9 @@ watch(
  *
  * @param params - `showSuccess` 為真時顯示重新整理成功通知。
  */
-const loadMarket = async ({ showSuccess = false }: { showSuccess?: boolean } = {}): Promise<void> => {
+const loadMarket = async ({
+  showSuccess = false,
+}: { showSuccess?: boolean } = {}): Promise<void> => {
   const result = await refetch()
   if (result.error) {
     return
@@ -215,28 +210,14 @@ const handleSwitchCurrency = ({ currency }: { currency: string }): void => {
           }}</template>
         </el-table-column>
         <el-table-column label="年化率" min-width="120">
-          <template #default="{ row }">{{ formatPct({ value: row.rateAprPct, digits: 2 }) }}</template>
+          <template #default="{ row }">{{
+            formatPct({ value: row.rateAprPct, digits: 2 })
+          }}</template>
         </el-table-column>
         <el-table-column prop="period" label="天期" width="100" />
         <el-table-column prop="count" label="筆數" width="100" />
         <el-table-column label="金額" min-width="140">
           <template #default="{ row }">{{ formatAmount({ value: row.amount }) }}</template>
-        </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right">
-          <template #default>
-            <div class="action-buttons">
-              <el-tooltip :content="diagnosticUnavailableHint" placement="top">
-                <span class="tooltip-trigger-wrap">
-                  <el-button size="small" disabled>策略診斷</el-button>
-                </span>
-              </el-tooltip>
-              <el-tooltip :content="diagnosticUnavailableHint" placement="top">
-                <span class="tooltip-trigger-wrap">
-                  <el-button size="small" type="success" disabled>模擬診斷</el-button>
-                </span>
-              </el-tooltip>
-            </div>
-          </template>
         </el-table-column>
       </el-table>
     </el-card>
@@ -253,7 +234,9 @@ const handleSwitchCurrency = ({ currency }: { currency: string }): void => {
           </template>
         </el-table-column>
         <el-table-column label="利率" min-width="120">
-          <template #default="{ row }">{{ formatPct({ value: row.rateAprPct, digits: 2 }) }}</template>
+          <template #default="{ row }">{{
+            formatPct({ value: row.rateAprPct, digits: 2 })
+          }}</template>
         </el-table-column>
         <el-table-column label="金額" min-width="140">
           <template #default="{ row }">{{ formatAmount({ value: row.amount }) }}</template>
@@ -264,246 +247,6 @@ const handleSwitchCurrency = ({ currency }: { currency: string }): void => {
         </el-table-column>
       </el-table>
     </el-card>
-
-    <el-dialog
-      v-model="diagnosticDialogVisibleRef"
-      :title="diagnosticModeRef === 'SIMULATION' ? '模擬 Bot 策略診斷' : 'Bot 策略診斷'"
-      width="960px"
-      destroy-on-close
-    >
-      <div>
-        <template v-if="diagnosticRef">
-          <el-alert
-            v-if="diagnosticRef.mode === 'SIMULATION'"
-            type="info"
-            :closable="false"
-            show-icon
-            title="模擬模式：忽略 botEnabled / autoRelist / ACTIVE 掛單 / 實際餘額，只看現行策略會不會選中這筆需求。"
-            class="section-alert"
-          />
-
-          <el-alert
-            :type="diagnosticRef.gate?.canPlaceNow ? 'success' : 'warning'"
-            :closable="false"
-            show-icon
-            :title="
-              diagnosticRef.mode === 'SIMULATION'
-                ? diagnosticRef.gate?.canPlaceNow
-                  ? '模擬結果：這筆需求會被現行策略選中。'
-                  : '模擬結果：這筆需求不會被現行策略選中。'
-                : diagnosticRef.gate?.canPlaceNow
-                  ? '目前 bot 會考慮承接這筆借款需求。'
-                  : '目前 bot 不會承接這筆借款需求。'
-            "
-          />
-
-          <el-timeline class="section-mini" v-if="(diagnosticRef.assumptions || []).length">
-            <el-timeline-item v-for="item in diagnosticRef.assumptions" :key="item" type="primary">
-              {{ item }}
-            </el-timeline-item>
-          </el-timeline>
-
-          <el-descriptions :column="3" border class="section">
-            <el-descriptions-item label="策略模式">
-              {{ strategyModeLabel({ value: diagnosticRef.bot?.strategyMode }) }}
-            </el-descriptions-item>
-            <el-descriptions-item label="Bot 幣種（僅顯示）">
-              {{ diagnosticRef.bot?.configuredCurrency || '-' }}
-            </el-descriptions-item>
-            <el-descriptions-item label="本次診斷幣種">
-              {{ diagnosticRef.bot?.diagnosticCurrency || diagnosticRef.target?.currency || '-' }}
-            </el-descriptions-item>
-            <el-descriptions-item label="目標幣種">
-              {{ diagnosticRef.target?.currency || '-' }}
-            </el-descriptions-item>
-            <el-descriptions-item label="Funding 可用餘額">
-              {{ formatAmount({ value: diagnosticRef.bot?.available }) }}
-            </el-descriptions-item>
-            <el-descriptions-item label="可用下單餘額">
-              {{ formatAmount({ value: diagnosticRef.bot?.effectiveAvailable }) }}
-            </el-descriptions-item>
-            <el-descriptions-item label="有效最小金額">
-              {{ formatAmount({ value: diagnosticRef.bot?.effectiveMinAmount }) }}
-            </el-descriptions-item>
-            <el-descriptions-item label="歷史送單次數">
-              {{ diagnosticRef.bot?.submittedCount || 0 }}
-            </el-descriptions-item>
-            <el-descriptions-item label="ACTIVE 掛單數量">
-              {{ diagnosticRef.bot?.activeOffersCount || 0 }}
-            </el-descriptions-item>
-            <el-descriptions-item label="autoRelist">
-              {{ diagnosticRef.bot?.autoRelist ? '開啟' : '關閉' }}
-            </el-descriptions-item>
-          </el-descriptions>
-
-          <div class="section">
-            <h3>目標借款需求</h3>
-            <el-descriptions :column="4" border>
-              <el-descriptions-item label="日利率">
-                {{
-                  formatPct({
-                    value: (diagnosticRef.target?.rateDaily || 0) * 100,
-                    digits: 6,
-                  })
-                }}
-              </el-descriptions-item>
-              <el-descriptions-item label="年化率">
-                {{ formatPct({ value: diagnosticRef.target?.rateAprPct || 0, digits: 2 }) }}
-              </el-descriptions-item>
-              <el-descriptions-item label="天期">
-                {{ diagnosticRef.target?.period || 0 }}
-              </el-descriptions-item>
-              <el-descriptions-item label="金額">
-                {{ formatAmount({ value: diagnosticRef.target?.amount }) }}
-              </el-descriptions-item>
-            </el-descriptions>
-          </div>
-
-          <div class="section">
-            <h3>阻擋原因</h3>
-            <el-empty
-              v-if="!(diagnosticRef.gate?.blockers || []).length"
-              description="目前沒有阻擋原因。"
-            />
-            <el-timeline v-else>
-              <el-timeline-item
-                v-for="item in diagnosticRef.gate.blockers"
-                :key="`${item.code}-${item.message}`"
-                type="warning"
-              >
-                <strong>{{ item.code }}</strong>
-                <div>{{ item.message }}</div>
-              </el-timeline-item>
-            </el-timeline>
-          </div>
-
-          <div class="section">
-            <h3>目前選中的最佳方案</h3>
-            <el-empty
-              v-if="!diagnosticRef.planner?.selectedContext"
-              description="目前沒有可用的 planner context。"
-            />
-            <el-descriptions v-else :column="3" border>
-              <el-descriptions-item label="選中天期">
-                {{ diagnosticRef.planner.selectedContext.period }} 天
-              </el-descriptions-item>
-              <el-descriptions-item label="選中日利率">
-                {{
-                  formatPct({
-                    value: diagnosticRef.planner.selectedContext.bestRateDaily * 100,
-                    digits: 6,
-                  })
-                }}
-              </el-descriptions-item>
-              <el-descriptions-item label="選中年化率">
-                {{
-                  formatPct({
-                    value: diagnosticRef.planner.selectedContext.bestRateAprPct,
-                    digits: 2,
-                  })
-                }}
-              </el-descriptions-item>
-              <el-descriptions-item label="最佳金額">
-                {{ formatAmount({ value: diagnosticRef.planner.selectedContext.bestAmountUsd }) }}
-              </el-descriptions-item>
-              <el-descriptions-item label="預估成交機率">
-                {{
-                  formatProbability({
-                    value: diagnosticRef.planner.selectedContext.fillProbability,
-                  })
-                }}
-              </el-descriptions-item>
-              <el-descriptions-item label="預估成交時間">
-                {{
-                  formatMinutes({
-                    value: diagnosticRef.planner.selectedContext.expectedFillMinutes,
-                  })
-                }}
-              </el-descriptions-item>
-              <el-descriptions-item label="Planner 結論">
-                {{ diagnosticRef.planner.selectedContext.shouldPlace ? '應下單' : '不下單' }}
-              </el-descriptions-item>
-              <el-descriptions-item label="最佳借款日利率">
-                {{
-                  formatPct({
-                    value: diagnosticRef.planner.selectedContext.bestTakeableRate * 100,
-                    digits: 6,
-                  })
-                }}
-              </el-descriptions-item>
-              <el-descriptions-item label="評估天期範圍">
-                {{ (diagnosticRef.planner?.planningPeriods || []).join(' / ') }}
-              </el-descriptions-item>
-            </el-descriptions>
-            <p class="reason-text" v-if="diagnosticRef.planner?.selectedContext?.reason">
-              {{ diagnosticRef.planner.selectedContext.reason }}
-            </p>
-          </div>
-
-          <div class="section">
-            <h3>預計掛單預覽</h3>
-            <el-empty
-              v-if="!(diagnosticRef.planner?.ladderPreview || []).length"
-              description="目前沒有預計掛單。"
-            />
-            <el-table v-else :data="diagnosticRef.planner.ladderPreview" size="small" border>
-              <el-table-column prop="rung" label="階層" width="80" />
-              <el-table-column label="金額" min-width="140">
-                <template #default="{ row }">{{ formatAmount({ value: row.amountUsd }) }}</template>
-              </el-table-column>
-              <el-table-column label="日利率" min-width="140">
-                <template #default="{ row }">{{
-                  formatPct({ value: row.rate * 100, digits: 6 })
-                }}</template>
-              </el-table-column>
-              <el-table-column label="年化率" min-width="140">
-                <template #default="{ row }">{{
-                  formatPct({ value: row.rate * 365 * 100, digits: 2 })
-                }}</template>
-              </el-table-column>
-              <el-table-column prop="period" label="天期" width="100" />
-            </el-table>
-          </div>
-
-          <div class="section">
-            <h3>與目標需求的匹配結果</h3>
-            <el-descriptions :column="3" border>
-              <el-descriptions-item label="幣種相符">
-                {{ diagnosticRef.targetEvaluation?.compatibleCurrency ? '是' : '否' }}
-              </el-descriptions-item>
-              <el-descriptions-item label="天期相符">
-                {{ diagnosticRef.targetEvaluation?.compatiblePeriod ? '是' : '否' }}
-              </el-descriptions-item>
-              <el-descriptions-item label="利率相符">
-                {{ diagnosticRef.targetEvaluation?.compatibleRate ? '是' : '否' }}
-              </el-descriptions-item>
-              <el-descriptions-item label="可匹配掛單數量">
-                {{ diagnosticRef.targetEvaluation?.matchableOrderCount || 0 }}
-              </el-descriptions-item>
-              <el-descriptions-item label="可承接金額">
-                {{ formatAmount({ value: diagnosticRef.targetEvaluation?.targetFillableUsd }) }}
-              </el-descriptions-item>
-              <el-descriptions-item label="是否可全部承接">
-                {{ diagnosticRef.targetEvaluation?.fullyConsumesTarget ? '是' : '否' }}
-              </el-descriptions-item>
-            </el-descriptions>
-
-            <el-timeline
-              class="section-mini"
-              v-if="(diagnosticRef.targetEvaluation?.notes || []).length"
-            >
-              <el-timeline-item
-                v-for="note in diagnosticRef.targetEvaluation.notes"
-                :key="note"
-                type="primary"
-              >
-                {{ note }}
-              </el-timeline-item>
-            </el-timeline>
-          </div>
-        </template>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
