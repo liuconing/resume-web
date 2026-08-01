@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { computed, markRaw } from 'vue'
-import { airQualityHome, fortuneHome, fundingHome } from '@/assets'
+import { airQualityHome, fortuneHome, fundingHome, cultivationHome } from '@/assets'
 import type { Links, WorkExperienceList } from './type'
 
 const links = markRaw<Links[]>([
@@ -264,6 +264,84 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
         <p class="reveal font-normal text-zinc-500 text-sm md:text-base mb-12">應用展示區</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <RouterLink
+            class="reveal card card-link h-full"
+            to="/funding-overview"
+            style="animation-delay: 160ms"
+          >
+            <img
+              :src="cultivationHome"
+              alt="文字修仙"
+              class="w-full h-48 object-cover rounded-lg mb-4"
+            />
+            <h6 class="font-semibold text-zinc-100 text-lg mb-2">文字修仙</h6>
+            <p class="text-zinc-500 text-sm mb-5">AI為主要人工為輔製作的文字修仙遊戲</p>
+            <ul class="list-disc pl-4 space-y-2 mb-4">
+              <li class="text-xs">
+                後端架構以 Node、TypeScript、Express、MongoDB／Mongoose 實作 API；採 routes →
+                controllers → services → models 分層，遊戲數值與結算以後端為來源
+              </li>
+              <li class="text-xs">
+                前端架構以 React、TypeScript、Tailwind 建置；採
+                View-Controller／View-Model、Domain（Repository／Usecase）分層
+              </li>
+              <li class="text-xs">
+                使用 Codex Agent 加速樣板、重構與規則文件產出，以 AGENTS.md、rules
+                約束分層、命名與檔案放置，讓 AI 輸出符合專案慣例
+              </li>
+              <li class="text-xs">
+                親自審核架構決策、領域模型與 API 格式，以 TypeScript 型別檢查、單元／整合測試，確保
+                AI 產出可維護且行為正確
+              </li>
+            </ul>
+            <div class="flex flex-wrap gap-2">
+              <span class="tag">React</span>
+              <span class="tag">React Query</span>
+              <span class="tag">node.js</span>
+              <span class="tag">express</span>
+              <span class="tag">mongoose</span>
+              <span class="tag">mongoDB</span>
+              <span class="tag">jwt</span>
+              <span class="tag">bcrypt</span>
+              <span class="tag">cors</span>
+            </div>
+          </RouterLink>
+
+          <RouterLink
+            class="reveal card card-link h-full"
+            to="/funding-overview"
+            style="animation-delay: 160ms"
+          >
+            <img
+              :src="fundingHome"
+              alt="放貸機器人"
+              class="w-full h-48 object-cover rounded-lg mb-4"
+            />
+            <h6 class="font-semibold text-zinc-100 text-lg mb-2">放貸機器人</h6>
+            <p class="text-zinc-500 text-sm mb-5">以自動化策略管理資金配置</p>
+            <ul class="list-disc pl-4 space-y-2 mb-4">
+              <li class="text-xs">
+                前端以 Vue3、TypeScript、Element Plus、Tailwind 建置；採
+                Domain（Repository／Usecase） 分層，將 API 邏輯與 UI 元件解耦
+              </li>
+              <li class="text-xs">
+                使用 TanStack Query 管理資料快取與輪詢，即時同步機器人狀態、放貸訂單與市場利率資訊
+              </li>
+              <li class="text-xs">
+                實作會員註冊、登入與 JWT 驗證流程，提供機器人啟停、放貸策略參數與保留金額等設定功能
+              </li>
+              <li class="text-xs">
+                以 AGENTS.md 與 Cursor rules 約束 AI 產出的分層、命名與檔案放置，並親自 Review
+                確保程式碼可維護
+              </li>
+            </ul>
+            <div class="flex flex-wrap gap-2">
+              <span class="tag">Vue3</span>
+              <span class="tag">Element Plus</span>
+              <span class="tag">TanStack Query</span>
+            </div>
+          </RouterLink>
+
           <RouterLink class="reveal card card-link h-full" to="/airQuality">
             <img
               :src="airQualityHome"
@@ -272,6 +350,19 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
             />
             <h6 class="font-semibold text-zinc-100 text-lg mb-2">空氣品質觀測網站</h6>
             <p class="text-zinc-500 text-sm mb-5">即時空氣品質資料視覺化</p>
+            <ul class="list-disc pl-4 space-y-2 mb-4">
+              <li class="text-xs">
+                串接環境部環境資料開放平臺 API，即時取得全台測站 AQI 與
+                O3、PM10、PM2.5、CO、SO2、NO2 等污染物數據
+              </li>
+              <li class="text-xs">
+                以 TanStack Query 管理 API 資料快取與載入狀態，API 邏輯依
+                Domain（Repository／Usecase）分層封裝
+              </li>
+              <li class="text-xs">
+                依 AQI 數值分級渲染對應顏色與健康狀態說明，支援縣市篩選、測站選取與載入／空狀態處理
+              </li>
+            </ul>
             <div class="flex flex-wrap gap-2">
               <span class="tag">Vue3</span>
               <span class="tag">Axios</span>
@@ -292,29 +383,18 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
             />
             <h6 class="font-semibold text-zinc-100 text-lg mb-2">神明求籤</h6>
             <p class="text-zinc-500 text-sm mb-5">祈福抽籤，神明指引未來方向</p>
+            <ul class="list-disc pl-4 space-y-2 mb-4">
+              <li class="text-xs">
+                以 Vue Transition 搭配 CSS／SCSS 動畫打造抽籤流程的多段轉場效果
+              </li>
+              <li class="text-xs">
+                使用 async/await 與 delay 工具函式控制動畫時序，並防止動畫進行中重複觸發
+              </li>
+            </ul>
             <div class="flex flex-wrap gap-2">
               <span class="tag">Vue3</span>
               <span class="tag">Vue transition</span>
               <span class="tag">CSS 動畫</span>
-            </div>
-          </RouterLink>
-
-          <RouterLink
-            class="reveal card card-link h-full"
-            to="/funding-overview"
-            style="animation-delay: 160ms"
-          >
-            <img
-              :src="fundingHome"
-              alt="放貸機器人"
-              class="w-full h-48 object-cover rounded-lg mb-4"
-            />
-            <h6 class="font-semibold text-zinc-100 text-lg mb-2">放貸機器人</h6>
-            <p class="text-zinc-500 text-sm mb-5">以自動化策略管理資金配置</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="tag">Vue3</span>
-              <span class="tag">Element Plus</span>
-              <span class="tag">TanStack Query</span>
             </div>
           </RouterLink>
         </div>
