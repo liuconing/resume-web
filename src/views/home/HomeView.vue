@@ -264,9 +264,11 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
         <p class="reveal font-normal text-zinc-500 text-sm md:text-base mb-12">應用展示區</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <RouterLink
+          <a
             class="reveal card card-link h-full"
-            to="/funding-overview"
+            href="https://cultivation-game-frontend.zeabur.app/"
+            target="_blank"
+            rel="noopener noreferrer"
             style="animation-delay: 160ms"
           >
             <img
@@ -305,7 +307,7 @@ const workExperiencesNewestFirst = computed(() => [...workExperiences].reverse()
               <span class="tag">bcrypt</span>
               <span class="tag">cors</span>
             </div>
-          </RouterLink>
+          </a>
 
           <RouterLink
             class="reveal card card-link h-full"
